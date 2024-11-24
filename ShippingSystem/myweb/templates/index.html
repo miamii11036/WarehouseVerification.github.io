@@ -4,8 +4,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>首頁</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh; /* 確保高度覆蓋整個視窗 */
+            display: flex;
+            justify-content: center; /* 水平置中 */
+            align-items: center; /* 垂直置中 */
+            background-color: #f9f9f9; /* 可選，設置背景色 */
+        }
+
+        fieldset{
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 增加陰影 */
+            text-align: center; /* 將表單內容置中 */
+        }
+
+        .submit{
+            margin-top: 10px; /* 按鈕與輸入框的間距 */
+            padding: 10px 20px;
+            background-color: gray; /* 按鈕背景色 */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>你好! 我的首頁</h1>
+    <!--
+        首頁只有輸入使用者帳戶與密碼的小方窗
+        輸入成功後的頁面才有base.html樣式-->
+    <fieldset>
+        <form action="" method="post">
+            {% csrf_token %} 
+            <p>
+                <label for="username">帳號：</label>
+                <input type="email" id="username" placeholder="xxx@email.com"><br>
+            </p>
+            <p>
+                <label for="password">密碼：</label>
+                <input type="password" id="password"><br>
+            </p>
+            <input class="submit" type="submit" >
+        </form>
+    </fieldset>
 </body>
 </html>
