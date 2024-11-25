@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>register</title>
+</head>
+<body>
+    <fieldset>
+        <form action="" method="post">
+            {% csrf_token %}
+            <input type="text" name="username" placeholder="使用者名稱">
+
+            <input type="text" name="account" placeholder="使用者帳號">
+
+            <input type="password" name="password" placeholder="使用者密碼">
+
+            <input type="email" name="email" placeholder="使用者信箱">
+
+            <input type="submit" value="註冊">
+        </form>
+    </fieldset>
+</body>
+</html>
