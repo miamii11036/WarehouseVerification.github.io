@@ -4,20 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>register</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh; /* 確保高度覆蓋整個視窗 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* 水平置中 */
+            align-items: center; /* 垂直置中 */
+            background-color: #f9f9f9; /* 可選，設置背景色 */
+        }
+
+        fieldset{
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 增加陰影 */
+            text-align: center; /* 將表單內容置中 */
+        }
+
+        .submit{
+            margin-top: 10px; /* 按鈕與輸入框的間距 */
+            padding: 10px 20px;
+            background-color: gray; /* 按鈕背景色 */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+        
+    </style>
 </head>
 <body>
     <fieldset>
         <form action="" method="post">
             {% csrf_token %}
-            <input type="text" name="username" placeholder="使用者名稱">
-
-            <input type="text" name="account" placeholder="使用者帳號">
-
-            <input type="password" name="password" placeholder="使用者密碼">
-
-            <input type="email" name="email" placeholder="使用者信箱">
-
-            <input type="submit" value="註冊">
+            <div class="input-group mb-3">
+                <span class="input-group-text">使用者名稱</span>
+                <input type="text" class="form-control" name="username">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text">使用者帳號</span>
+                <input type="text" class="form-control" name="account">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text">使用者密碼</span>
+                <input type="password" class="form-control" name="password">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text">使用者信箱</span>
+                <input type="email" class="form-control" name="email">
+            </div>
+            <input type="submit" value="註冊" class="submit">
         </form>
     </fieldset>
 </body>
