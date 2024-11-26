@@ -36,14 +36,16 @@
             cursor: pointer;
             font-size: 20px;
         }
+        .title{
+            font-size: 70px;
+            margin-bottom: 150px;
+        }
         
     </style>
     
 </head>
 <body>
-    <!--
-        首頁只有輸入使用者帳戶與密碼的小方窗
-        輸入成功後的頁面才有base.html樣式-->
+        <div class="title">Welcome to Shipping System</div>
         <fieldset>
             <form action="" method="post">
                 {% csrf_token %}

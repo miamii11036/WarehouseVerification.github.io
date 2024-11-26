@@ -20,6 +20,8 @@
             
         }
         fieldset{
+            margin-bottom: 255px;
+            margin-top: 150px;
             padding: 40px 60px 40px 60px;
             border: 1px solid #ccc;
             border-radius: 8px;
@@ -57,9 +59,14 @@
             font-size: 0.9em;
             margin-left: 10px; /* 與 checkbox 的分隔距離 */
         }
+        .title {
+            font-size: 70px;
+            margin: 0;
+        }
     </style>
 </head>
 <body>
+    <div class="title">Create Your Account</div>
     <fieldset>
         <form action="" method="post" id="registrationForm">
             {% csrf_token %}
