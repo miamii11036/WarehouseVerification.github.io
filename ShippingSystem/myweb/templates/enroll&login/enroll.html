@@ -38,11 +38,25 @@
             cursor: pointer;
             font-size: 20px;
         }
-        samp{
-            color: red;
-            font-size: 20px;
+        .checkbox-error-container {
+            display: flex;
+            align-items: center; 
+            justify-content: space-between; 
+            margin-top: 5px;
+            margin-bottom: 0px;
         }
-
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+        }
+        .checkbox-container input[type="checkbox"] {
+            margin-right: 5px; 
+        }
+        #error-message {
+            color: red;
+            font-size: 0.9em;
+            margin-left: 10px; /* 與 checkbox 的分隔距離 */
+        }
     </style>
 </head>
 <body>
@@ -64,20 +78,33 @@
                 </div>
                 <div class="input-group mb-3" style="margin-bottom: 0px !important;">
                     <input type="password" id="confirm_password" class="form-control" placeholder="Confirm Password" aria-label="Confirm Password" required>
-                </div><samp id="error-message"></samp><br>
-
+                </div>
+                <div class="checkbox-error-container">
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="showpassword">
+                        <label for="showpassword">顯示密碼</label>
+                    </div>
+                    <samp id="error-message"></samp>
+                </div>
             <input type="submit" value="註冊" class="submit">
         </form>
     </fieldset>
     <script src="{% static 'js/register.js' %}"></script>
-    <script>
+    <script> 
+    //*檢查密碼一致性*//
         const Form = document.getElementById("registrationForm");
-        const Password = document.getElementById("password").value;
+        const Password = document.getElementById("password");
         const Confirm_password = document.getElementById("confirm_password");
         const Error_message = document.getElementById("error-message");
 
-        Confirm_password.addEventListener("input", function(){
-            ConfirmPassword(Password, Confirm_password, Error_message);
+        Form.addEventListener("submit", function(){
+            ConfirmPassword(Password, Confirm_password, Error_message, event);
+        });
+    //*顯示密碼*//
+        const ShowPasswordCheckBox = document.getElementById("showpassword");
+
+        ShowPasswordCheckBox.addEventListener("change", function(){
+            displaypassword(ShowPasswordCheckBox, Password, Confirm_password);
         });
     </script>
 </body>
