@@ -8,3 +8,4 @@ class UserInfoForm(forms.ModelForm):
     class Meta:
         model = UserInfo
         fields = ["username", "account", "password", "email"] #此為表格的columns
+

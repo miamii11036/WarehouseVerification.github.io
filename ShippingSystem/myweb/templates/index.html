@@ -24,6 +24,8 @@
             background-color: #FBFBFB;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 增加陰影 */
             text-align: center; /* 將表單內容置中 */
+            display: flex;
+            flex-direction: column;
         }
 
         .submit{
@@ -52,22 +54,26 @@
 <body>
         <div class="title">Welcome to Shipping System</div>
         <fieldset>
-            <form action="" method="post">
+            <form action="{% url 'login' %}" method="post">
                 {% csrf_token %}
                 <!-- 帳號輸入 -->
                 <div class="input-group mb-3">
                     <span class="input-group-text"><img src="{% static 'image/3.png' %}" style="height: 35px; width: 35px;"></span>
-                    <input type="text" class="form-control" placeholder="Account" aria-label="Account">
+                    <input type="text" class="form-control" placeholder="Account" aria-label="Account" name="account">
                 </div>
                 <!-- 密碼輸入 -->
-                <div class="input-group mb-3">
+                <div class="input-group mb-3" style="margin-bottom: 0px !important;">
                     <span class="input-group-text"><img src="{% static 'image/2.png' %}" style="height: 35px; width: 35px;" ></span>
-                    <input type="password" class="form-control" placeholder="Password" aria-label="Password">
+                    <input type="password" class="form-control" placeholder="Password" aria-label="Password" name="password">
                 </div>
+                {% if messages %}
+                    {% for message in messages %}
+                        <div style="font-size: 16px; color: red;">{{message}}</div> 
+                    {% endfor %}
+                {% endif %}
                 <!-- 登入按鈕 -->
                 <input class="submit" type="submit" value="sign in">
             </form>
-            <a href="/login">登入</a>
         </fieldset>
     <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" href="/enroll">register</a>
 </body>

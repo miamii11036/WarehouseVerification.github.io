@@ -17,12 +17,12 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from myweb.views import index, enroll, enrollok, login
+from myweb.views import index, enroll, enrollok, user_login
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", index),
     path("enroll/", enroll),
     path("enrollok/", enrollok),
-    path("login/", login)
+    path("login/", user_login, name="login")
 ]
