@@ -16,3 +16,8 @@ function displaypassword(ShowPasswordCheckBox, Password, Confirm_password) {
     Password.type = type;
     Confirm_password.type = type;
 }
+
+//*註冊成功後幾秒後自動跳轉*//
+function autoturn(){
+    setTimeout(function(){window.location.href = "/enroll"}, 3000);
+};

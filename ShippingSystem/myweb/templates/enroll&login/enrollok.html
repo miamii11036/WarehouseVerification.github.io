@@ -1,15 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>enrollok</title>
 </head>
 <body>
-    <h1>恭喜註冊成功</h1>
-    <p>使用者名稱:{{username}}</p>
-    <p>使用者帳號:{{account}}</p>
-    <p>使用者密碼:{{password}}</p>
-    <p>使用者信箱:{{email}}</p>
+    <div class="title">註冊成功</div>
+    <div class="content">歡迎{{username}}加入</div>
+
+    <script src="{% static 'js/register.js' %}"></script>
+    <script>
+        window.onload = function(){
+            autoturn();
+        }
+    </script>
 </body>
 </html>
