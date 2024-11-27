@@ -16,32 +16,26 @@
 <body>
   <nav class="navbar navbar-expand-lg bg-body-tertiary" style="background-color: #8FABB7 !important;">
     <div class="container-fluid" >
-      <a class="navbar-brand" href="#"><img src="{% static 'image/4.png' %}"></a>
+      <div class="navbar-brand" style="margin: 0px;"><img src="{% static 'image/4.png' %}" style="height: 45px; width: 45px;">&nbsp;</div>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto" >
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#" style="color: #01070A;">Home</a>
+            <a class="nav-link active" aria-current="page" href="#" style="color: #01070A; font-size: 30px;">Status</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" style="color: #01070A;">Features</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#" style="color: #01070A;">Pricing</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link disabled" aria-disabled="true" style="color: #01070A;">Disabled</a>
+            <a class="nav-link" href="#" style="color: #01070A; font-size: 30px;">Search</a>
           </li>
         </ul>
 
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#" style="color: #01070A;">會員資料</a>
+            <a class="nav-link active" aria-current="page" href="#" style="color: #01070A;"><img src="{% static 'image/3.png' %}" style="height: 40px; width: 40px;">&nbsp;&nbsp;</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" style="color: #01070A;">登出</a>
+            <a class="nav-link" href="#" style="color: #01070A;"><img src="{% static 'image/5.png' %}" style="height: 40px; width: 40px;"></a>
           </li>
         </ul>
       </div>

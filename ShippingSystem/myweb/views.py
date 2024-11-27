@@ -45,3 +45,6 @@ def enrollok(request):
     password = request.session.get("password")
     username = request.session.get("username")
     return render(request, "enroll&login/enrollok.html", locals())
+
+def login(request):
+    return render(request, "enroll&login/member.html")

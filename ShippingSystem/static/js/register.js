@@ -5,7 +5,7 @@ function ConfirmPassword(Password, Confirm_password, Error_message, event) {
     Error_message.textContent="";
     if (Word != Cword) {
         event.preventDefault();
-        Error_message.textContent="not match";
+        Error_message.textContent="password not match";
     };
 }   
 //*顯示密碼*//
