@@ -58,5 +58,18 @@ def user_login(request):
             request.session["password"] = compare_user.password
             request.session["account"] = compare_user.account
             request.session["email"] = compare_user.email
-            return render(request, "enroll&login/member.html")
+            return redirect("/member")
     return render(request, "index.html")
+
+def member(request):
+    """
+    登入成功時要檢查狀態is_login是否為True，才能進此頁面
+    """
+    status=request.session.get('is_login')
+    if not status:
+        return redirect('/')
+    username = request.session.get('username')
+    password = request.session.get('password')
+    account = request.session.get('account')
+    email = request.session.get("email")
+    return render(request,"enroll&login/member.html", locals())
