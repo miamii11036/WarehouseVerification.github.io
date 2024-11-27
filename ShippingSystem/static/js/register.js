@@ -5,8 +5,8 @@ function ConfirmPassword(Password, Confirm_password, Error_message, event) {
     Error_message.textContent="";
     if (Word != Cword) {
         event.preventDefault();
-        Error_message.textContent="密碼不一致";
-    }
+        Error_message.textContent="not match";
+    };
 }   
 //*顯示密碼*//
 function displaypassword(ShowPasswordCheckBox, Password, Confirm_password) {
