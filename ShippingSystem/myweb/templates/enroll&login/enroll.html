@@ -22,7 +22,7 @@
         fieldset{
             margin-bottom: 255px;
             margin-top: 150px;
-            padding: 40px 100px 40px 100px;
+            padding: 40px 70px 40px 70px;
             border: 1px solid #ccc;
             border-radius: 8px;
             background-color: #FBFBFB;
@@ -70,21 +70,27 @@
     <fieldset>
         <form action="" method="post" id="registrationForm">
             {% csrf_token %}
-                <div class="input-group mb-3" style="width: 420px;">
-                    <input type="text" name="username" class="form-control" placeholder="Username" aria-label="Username" required>
+                <div class="form-floating mb-3" style="width: 350px;">
+                    <input type="text" class="form-control" id="floatingInput" placeholder="Username" name="username" required>
+                    <label for="floatingInput">Username</label>
                 </div>
-                <div class="input-group mb-3">
-                    <input type="email" name="email" class="form-control" placeholder="Email" aria-label="Email" required>
+                <div class="form-floating mb-3">
+                    <input type="email" name="email" class="form-control" id="floatingInput" placeholder="Email" required>
+                    <label for="floatingInput">Email</label>
                 </div>
-                <div class="input-group mb-3">
-                    <input type="text" name="account" class="form-control" placeholder="Account" aria-label="Account" required>
+                <div class="form-floating mb-3">
+                    <input type="text" name="account" class="form-control" id="floatingInput" placeholder="Account" required>
+                    <label for="floatingInput">Account</label>
                 </div>
 
-                <div class="input-group mb-3">
-                    <input type="password" name="password" id="password" class="form-control" placeholder="Create a Password" aria-label="Create a Password" required>
+                <div class="form-floating mb-3">
+                    <input type="password" name="password" class="form-control" id="password" placeholder="Password" required>
+                    <label for="password">Create a Password</label>
                 </div>
-                <div class="input-group mb-3" style="margin-bottom: 0px !important;">
-                    <input type="password" id="confirm_password" class="form-control" placeholder="Confirm Password" aria-label="Confirm Password" required>
+
+                <div class="form-floating mb-3">
+                    <input type="password" name="confirm_password" class="form-control" id="confirm_password" placeholder="Confirm Password" required>
+                    <label for="confirm_password">Confirm Password</label>
                 </div>
                 <div class="checkbox-error-container">
                     <div class="checkbox-container">
