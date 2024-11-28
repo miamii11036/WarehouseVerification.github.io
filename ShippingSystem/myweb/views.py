@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
 from myweb.form import UserInfoForm
 from myweb.models import UserInfo
 from django.contrib import messages
@@ -54,22 +55,28 @@ def user_login(request):
             return redirect("/") 
         else:
             request.session["is_login"] = True
-            request.session["username"] = compare_user.username
-            request.session["password"] = compare_user.password
-            request.session["account"] = compare_user.account
+            #request.session["username"] = compare_user.username
+            #request.session["password"] = compare_user.password
+            #request.session["account"] = compare_user.account
             request.session["email"] = compare_user.email
-            return redirect("/member")
+            return redirect("member_data")
     return render(request, "index.html")
 
-def member(request):
+def member_data(request):
     """
     登入成功時要檢查狀態is_login是否為True，才能進此頁面
     """
     status=request.session.get('is_login')
     if not status:
         return redirect('/')
-    username = request.session.get('username')
-    password = request.session.get('password')
-    account = request.session.get('account')
     email = request.session.get("email")
-    return render(request,"enroll&login/member.html", locals())
+    user_info = UserInfo.objects.filter(email=email).first()
+    if user_info:
+        User_Info = {
+            "username": user_info.username,
+            "account": user_info.account,
+            "password": user_info.password,
+            "email": user_info.email,
+        }
+        return render(request, 'enroll&login/member.html', User_Info)
+    

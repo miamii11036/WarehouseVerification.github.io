@@ -4,24 +4,104 @@
 
 {% block head %}
 <style>
-    body{
-        background-color: #FBFBFB;
+/* 通用樣式 */
+    body {
+        font-family: Arial, sans-serif; /* 簡單設定字體 */
+        background-color: #FBFBFB; /* 背景顏色 */
+        margin: 0;
+        padding: 0;
+    }
+
+    /* 標題樣式 */
+    #title {
+        color: #01070A;
+    }
+
+    /* 功能列表樣式 */
+    #functionlist {
+        min-width: 200px; /* 設定側邊欄最小寬度 */
+        min-height: 500px;
+    }
+
+    #functionlist .list-group-item {
+        border-radius: 5px; /* 邊角圓滑 */
+        margin-bottom: 10px; /* 元素間距 */
+        text-align: center;
+        border: 1px solid #8FABB7;
+    }
+
+    /* Active 狀態的樣式 */
+    #functionlist .list-group-item.active {
+        background-color: #46656F;
+        color: #FBFBFB;
+    }
+
+    /* 內容區樣式 */
+    #functiondata {
+        min-height: 500px; /* 設定內容區最小高度 */
+    }
+
+    /* 響應式設計 */
+    @media (max-width: 768px) {
+        .d-flex {
+            flex-direction: column; /* 小螢幕改為垂直排列 */
+        }
+
+        #functionlist {
+            margin-bottom: 20px; /* 增加間距 */
+        }
     }
 </style>
 {% endblock %}
 
 <!-----------------------這裡是會員資料----------------------------------------------------------------->
 {% block content %}
-<div>{{username}} 歡迎回來</div>
-<fieldset class="functionlist">
-  <div class="list-group" style="width: 30%;">
-    <a href="#" class="list-group-item list-group-item-action active" aria-current="true">
-    My Profile
-    </a>
-    <a href="#" class="list-group-item list-group-item-action">Update Profile</a>
-    <a href="#" class="list-group-item list-group-item-action">Delete Account</a>
-    <a class="list-group-item list-group-item-action disabled" aria-disabled="true">A disabled link item</a>
-  </div>
-</fieldset>
+<div class="container my-5">
+  <!-- 標題區域 -->
+  <div id="title" class="text-start fs-1 fw-bold ">{{username}} 歡迎回來</div>
+  <div class="d-flex mt-4" style="gap: 20px;">
+      <!-- 功能列表 -->
+      <fieldset class="border border-2 rounded p-3 shadow p-3 mb-5 bg-body-tertiary rounded" id="functionlist" style="flex: 1; background-color: #FBFBFB;">
+          <div class="list-group" id="list">
+              <button type="button" class="list-group-item list-group-item-action active" aria-current="true" id="loadMemberData">
+                  My Profile 
+              </button>
+              <button type="button" class="list-group-item list-group-item-action" >
+                  Update Profile
+              </button>
+              <button type="button" class="list-group-item list-group-item-action" >
+                  Delete Account
+              </button>
+          </div>
+      </fieldset>
+      <!-- 內容顯示區 -->
+      <fieldset class="border border-2 rounded shadow p-3 mb-5 bg-body-tertiary rounded" id="functiondata" style="flex: 2; background-color: #FBFBFB;">
+        <!--會員基本資料-->
+          <div id="user-data" class="row">
+            <label for="username" class="col-sm-2 col-form-label" 
+                    style="padding-right: 0%; width: 100px;">
+                    Username</label>
+            <div class="col-sm-10" style="padding-left: 0px;" >
+              <input class="form-control" id="username" type="text" value="{{username}}" aria-label="{{username}}" readonly>
+            </div>
+            <p></p>
+            <label for="account" class="col-sm-2 col-form-label" style="padding-right: 0%; width: 100px;">Account</label>
+            <div class="col-sm-10" style="padding-left: 0px;" >
+              <input class="form-control" id="account" type="text" value="{{account}}" aria-label="{{account}}" readonly>
+            </div>
+            <p></p>
+            <label for="email" class="col-sm-2 col-form-label" style="padding-right: 0%; width: 100px;">Email</label>
+            <div class="col-sm-10" style="padding-left: 0px;" >
+              <input class="form-control" id="email" type="text" value="{{email}}" aria-label="{{email}}" readonly>
+            </div>
+            <p></p>
+            <label for="email" class="col-sm-2 col-form-label" style="padding-right: 0%; width: 100px;">Password</label>
+            <div class="col-sm-10" style="padding-left: 0px;" >
+              <input class="form-control" id="email" type="text" value="{{password}}" aria-label="{{password}}" readonly>
+            </div>
+          </div>
+      </fieldset>
 
+  </div>
+</div>
 {% endblock %}
