@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
+from django.db import IntegrityError
 from myweb.form import UserInfoForm
 from myweb.models import UserInfo
 from django.contrib import messages
-
+from django.contrib.auth.hashers import make_password, check_password
 
 # Create your views here.
 def index(request):
@@ -18,7 +19,9 @@ def enroll(request):
     if request.method=="POST": 
         if form.is_valid(): #驗證資料是否成功
             try:
-                form.save()
+                user = form.save(commit=False)
+                user.password = make_password(form.cleaned_data['password'])
+                user.save()
                 email = form.cleaned_data["email"] #整理表單中的email columns資料
                 campare_user = UserInfo.objects.get(email=email)
                 #以下這段用session儲存來自資料庫的資料，並在enrollok讀取session儲存的資料
@@ -26,12 +29,17 @@ def enroll(request):
                 request.session['is_login'] = True
                 request.session["username"] = campare_user.username
                 return redirect("/enrollok") 
-            except:
-                pass
-                return redirect("/enroll")
+            except IntegrityError as e:
+                # 捕捉資料庫完整性錯誤（如 email 重複）
+                print(f"IntegrityError: {e}")
+                error_message = "電子郵件已被註冊"
+            except Exception as e:
+                print(f"Error during saving user: {e}")
+                error_message = "註冊失敗，請稍後再試"
+        return render(request, "enroll&login/enroll.html", {"error":error_message})
     else:
         form = UserInfoForm()
-    return render(request, "enroll&login/enroll.html", locals())
+    return render(request, "enroll&login/enroll.html")
 
 def enrollok(request):
     """
@@ -50,14 +58,16 @@ def user_login(request):
     if request.method=="POST":
         account = request.POST.get("account")
         password = request.POST.get("password")
-        compare_user = UserInfo.objects.filter(account=account, password=password).first()
-        if not compare_user:
+        compare_user = UserInfo.objects.filter(account=account).first()
+        if not compare_user: #先比對account是否存在
+            messages.error(request, "Invalid account or password")
+            return redirect("/") 
+        if not check_password(password, compare_user.password): #在比對密碼是否一致
             messages.error(request, "Invalid account or password")
             return redirect("/") 
         else:
             request.session["is_login"] = True
             #request.session["username"] = compare_user.username
-            #request.session["password"] = compare_user.password
             #request.session["account"] = compare_user.account
             request.session["email"] = compare_user.email
             return redirect("member_data")
@@ -76,10 +86,11 @@ def member_data(request):
         User_Info = {
             "username": user_info.username,
             "account": user_info.account,
-            "password": user_info.password,
             "email": user_info.email,
         }
         return render(request, 'enroll&login/member.html', User_Info)
+    else:
+        return redirect('/')
     
 def modify_data(request, email):
     """

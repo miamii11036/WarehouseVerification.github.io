@@ -28,6 +28,7 @@
             background-color: #FBFBFB;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 增加陰影 */
             text-align: center; /* 將表單內容置中 */
+            min-width: 557px;
         }
 
         .submit{
@@ -70,7 +71,7 @@
     <fieldset>
         <form action="" method="post" id="registrationForm">
             {% csrf_token %}
-                <div class="form-floating mb-3" style="width: 350px;">
+                <div class="form-floating mb-3">
                     <input type="text" class="form-control" id="floatingInput" placeholder="Username" name="username" required>
                     <label for="floatingInput">Username</label>
                 </div>
@@ -119,6 +120,12 @@
     ShowPasswordCheckBox.addEventListener("change", function(){
         displaypassword(ShowPasswordCheckBox, Password, Confirm_password);
     });
-    </script>   
+    </script>  
+    {% if error %} 
+    <script>
+    //*當註冊失敗時*//
+        showerror("{{error}}");
+    </script>
+    {% endif %}
 </body>
 </html>

@@ -52,12 +52,19 @@
             margin-bottom: 20px; /* 增加間距 */
         }
     }
+    .d-flex{
+        justify-content: center;
+        align-items: center;
+    }
+    .container {
+        margin-top: 150px;
+    }
 </style>
 {% endblock %}
 
 <!-----------------------這裡是會員資料----------------------------------------------------------------->
 {% block content %}
-<div class="container my-5">
+<div class="container">
   <!-- 標題區域 -->
   <div id="title" class="text-start fs-1 fw-bold ">{{username}} 歡迎回來</div>
   <div class="d-flex mt-4" style="gap: 20px;">
@@ -90,16 +97,10 @@
                 <div class="col-sm-12">
                 <input class="form-control" id="email" type="text" value="{{email}}" aria-label="{{email}}" readonly>
                 </div>
-            </div>
-            <div id="user-data" class="row">
+                <p></p>
                 <label for="account" class="col-sm-2 col-form-label" style="min-width: 115px;">Account</label>
                 <div class="col-sm-12">
                 <input class="form-control" id="account" type="text" value="{{account}}" aria-label="{{account}}" readonly>
-                </div>
-                <p></p>
-                <label for="email" class="col-sm-2 col-form-label" style="min-width: 115px;">Password</label>
-                <div class="col-sm-12">
-                <input class="form-control" id="email" type="text" value="{{password}}" aria-label="{{password}}" readonly>
                 </div>
             </div>
         </div>

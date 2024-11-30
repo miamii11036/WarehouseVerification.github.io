@@ -17,3 +17,7 @@ function displaypassword(ShowPasswordCheckBox, Password, Confirm_password) {
     Confirm_password.type = type;
 }
 
+//*顯示註冊錯誤視窗*//
+function showerror(Error_message) {
+    window.alert(Error_message);
+}
