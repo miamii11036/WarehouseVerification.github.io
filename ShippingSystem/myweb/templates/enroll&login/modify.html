@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block head %}
+<style>
+/* 通用樣式 */
+    body {
+        font-family: Arial, sans-serif; /* 簡單設定字體 */
+        background-color: #FBFBFB; /* 背景顏色 */
+        margin: 0;
+        padding: 0;
+    }
+
+    /* 標題樣式 */
+    #title {
+        color: #01070A;
+        font-family: 微軟正黑體;
+    }
+
+    /* 功能列表樣式 */
+    #functionlist {
+        min-width: 200px; /* 設定側邊欄最小寬度 */
+        min-height: 600px;
+    }
+
+    #functionlist .list-group-item {
+        border-radius: 5px; /* 邊角圓滑 */
+        margin-bottom: 10px; /* 元素間距 */
+        text-align: center;
+        border: 1px solid #8FABB7;
+    }
+
+    /* Active 狀態的樣式 */
+    #functionlist .list-group-item.active {
+        background-color: #46656F;
+        color: #FBFBFB;
+    }
+
+    /* 內容區樣式 */
+    #functiondata {
+        min-height: 600px; /* 設定內容區最小高度 */
+    }
+
+    /* 響應式設計 */
+    @media (max-width: 768px) {
+        .d-flex {
+            flex-direction: column; /* 小螢幕改為垂直排列 */
+        }
+
+        #functionlist {
+            margin-bottom: 20px; /* 增加間距 */
+        }
+    }
+    .submit{
+            margin-top: 114px; /* 按鈕與輸入框的間距 */
+            padding: 10px 20px;
+            background-color: #46656F; /* 按鈕背景色 */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 20px;
+            width: fit-content; 
+        }
+</style>
+{% endblock %}
+
+<!-----------------------這裡是會員資料----------------------------------------------------------------->
+{% block content %}
+<div class="container my-5">
+  <!-- 標題區域 -->
+  <div id="title" class="text-start fs-1 fw-bold ">修改會員資料</div>
+  <div class="d-flex mt-4" style="gap: 20px;">
+      <!-- 功能列表 -->
+      <fieldset class="border border-2 rounded p-3 shadow p-3 mb-5 bg-body-tertiary rounded" id="functionlist" style="flex: 1; background-color: #FBFBFB;">
+          <div class="list-group" id="list">
+              <a href="{% url 'member_data' %}" class="list-group-item list-group-item-action" aria-current="false" id="loadMemberData">
+                  My Profile 
+              </a>
+              <a href="/member/modify/{{email}}" class="list-group-item list-group-item-action active" aria-current="true" id="modifyMemberData">
+                  Update Profile
+              </a>
+              <a href="#" class="list-group-item list-group-item-action" aria-current="false" id="deleteMember">
+                  Delete Account
+              </a>
+          </div>
+      </fieldset>
+      <!-- 內容顯示區 -->
+      <fieldset class="border border-2 rounded shadow p-3 mb-5 bg-body-tertiary rounded" id="functiondata" style="flex: 2; background-color: #FBFBFB;">
+        <!--修改會員資料-->
+        <form action="" method="post" class="vstack" style="align-items: center;">
+            {% csrf_token %}
+            {# form #}
+            <div class="hstack gap-3">
+                <div id="user-data" class="row">
+                    <label for="username" class="col-sm-2 col-form-label" style="min-width: 115px;">
+                        Username</label>
+                    <div class="col-sm-12">
+                    <input class="form-control" id="username" type="text" value="{{form.username.value}}" aria-label="{{form.username.value}}" name="{{form.username.name}}">
+                    </div>   
+                    <p></p>
+                    <label for="email" class="col-sm-2 col-form-label" style="min-width: 115px;" hidden>Email</label>
+                    <div class="col-sm-12">
+                    <input class="form-control" id="email" type="text" value="{{form.email.value}}" aria-label="{{form.email.value}}" name="{{form.email.name}}" hidden>
+                    </div>
+                    <label for="account" class="col-sm-2 col-form-label" style="min-width: 115px;">Account</label>
+                    <div class="col-sm-12">
+                    <input class="form-control" id="account" type="text" value="{{form.account.value}}" aria-label="{{form.account.value}}" name="{{form.account.name}}">
+                    </div>
+                    <p></p>
+                    <label for="email" class="col-sm-2 col-form-label" style="min-width: 115px;">Password</label>
+                    <div class="col-sm-12">
+                    <input class="form-control" id="email" type="text" value="{{form.password.value}}" aria-label="{{form.password.value}}" name="{{form.password.name}}">
+                    </div>
+                </div>
+            </div>
+            <input type="submit" value="update" class="submit">
+        </form>
+        
+      </fieldset>
+  </div>
+</div>
+{% endblock %}

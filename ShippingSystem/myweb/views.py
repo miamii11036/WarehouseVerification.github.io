@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from myweb.form import UserInfoForm
 from myweb.models import UserInfo
 from django.contrib import messages
+
 
 # Create your views here.
 def index(request):
@@ -80,3 +81,23 @@ def member_data(request):
         }
         return render(request, 'enroll&login/member.html', User_Info)
     
+def modify_data(request, email):
+    """
+    顯示會員的資料並讓使用者修改資料後上傳資料庫更改原本的資料
+    """
+    status = request.session.get("is_login")
+    if status:
+        user = UserInfo.objects.get(email=email)
+        form = UserInfoForm(instance=user)
+        if request.method == "POST":
+            form = UserInfoForm(request.POST, instance=user)
+            if form.is_valid():
+                try:
+                    form.save()
+                    request.session["is_login"] = True
+                    return redirect("member_data")
+                except:
+                    return HttpResponse("沒有儲存到資料庫")
+            else:
+                return HttpResponse("沒通過驗證")
+        return render(request, "enroll&login/modify.html", locals())
