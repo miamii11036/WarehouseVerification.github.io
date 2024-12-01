@@ -119,3 +119,12 @@ def modify_data(request, email):
             else:
                 return HttpResponse("沒通過驗證")
         return render(request, "enroll&login/modify.html", {"form":form, "user":user})
+    else:
+        return redirect("/")
+    
+def delete_member(request):
+    status = request.session.get("is_login")
+    email = request.session.get("email")
+    if not status:
+        return redirect("/")
+    return render(request, "enroll&login/delete.html", {"email":email})

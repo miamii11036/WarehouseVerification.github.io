@@ -15,7 +15,6 @@
     /* 標題樣式 */
     #title {
         color: #01070A;
-        font-family: 微軟正黑體;
     }
 
     /* 功能列表樣式 */
@@ -89,7 +88,7 @@
               <a href="/member/modify/{{email}}" class="list-group-item list-group-item-action active" aria-current="true" id="modifyMemberData">
                   Update Profile
               </a>
-              <a href="#" class="list-group-item list-group-item-action" aria-current="false" id="deleteMember">
+              <a href="{% url 'delete_member'%}" class="list-group-item list-group-item-action" aria-current="false" id="deleteMember">
                   Delete Account
               </a>
           </div>

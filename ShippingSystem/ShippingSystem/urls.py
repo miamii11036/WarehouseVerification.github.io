@@ -17,7 +17,7 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from myweb.views import index, enroll, enrollok, user_login, member_data, modify_data
+from myweb.views import index, enroll, enrollok, user_login, member_data, modify_data, delete_member
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -26,5 +26,6 @@ urlpatterns = [
     path("enrollok/", enrollok),
     path("login/", user_login, name="login"),
     path("member/data/", member_data, name="member_data"),
-    path("member/modify/<str:email>", modify_data, name="modify_data")
+    path("member/modify/<str:email>", modify_data, name="modify_data"),
+    path("member/delete", delete_member, name="delete_member")
 ]

@@ -52,12 +52,28 @@
             margin-bottom: 20px; /* 增加間距 */
         }
     }
-    .d-flex{
-        justify-content: center;
-        align-items: center;
-    }
     .container {
         margin-top: 150px;
+    }
+    .submit{
+             /* 按鈕與輸入框的間距 */
+            padding: 10px 20px;
+            background-color: #46656F; /* 按鈕背景色 */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 30px;
+            width: fit-content; 
+        }
+    #delete_member {
+        display: flex; 
+        flex-direction: column; 
+        justify-content: center; 
+        align-items: center; 
+        padding: 20px; 
+        margin-top: 150px;
+        font-size: 40px;
     }
 </style>
 {% endblock %}
@@ -66,43 +82,27 @@
 {% block content %}
 <div class="container">
   <!-- 標題區域 -->
-  <div id="title" class="text-start fs-1 fw-bold ">{{username}} Welcome back</div>
+  <div id="title" class="text-start fs-1 fw-bold ">Delete member</div>
   <div class="d-flex mt-4" style="gap: 20px;">
       <!-- 功能列表 -->
       <fieldset class="border border-2 rounded p-3 shadow p-3 mb-5 bg-body-tertiary rounded" id="functionlist" style="flex: 1; background-color: #FBFBFB;">
           <div class="list-group" id="list">
-              <a href="{% url 'member_data' %}" class="list-group-item list-group-item-action active" aria-current="true" id="loadMemberData">
+              <a href="{% url 'member_data' %}" class="list-group-item list-group-item-action" aria-current="false" id="loadMemberData">
                   My Profile 
               </a>
               <a href="/member/modify/{{email}}" class="list-group-item list-group-item-action" aria-current="false" id="modifyMemberData">
                   Update Profile
               </a>
-              <a href="{% url 'delete_member' %}" class="list-group-item list-group-item-action" aria-current="false" id="deleteMember">
+              <a href="{% url 'delete_member'%}" class="list-group-item list-group-item-action active" aria-current="true" id="deleteMember">
                   Delete Account
               </a>
           </div>
       </fieldset>
       <!-- 內容顯示區 -->
       <fieldset class="border border-2 rounded shadow p-3 mb-5 bg-body-tertiary rounded" id="functiondata" style="flex: 2; background-color: #FBFBFB;">
-        <!--會員基本資料-->
-        <div class="hstack gap-3">
-            <div id="user-data" class="row">
-                <label for="username" class="col-sm-2 col-form-label" style="min-width: 115px;">
-                        Username</label>
-                <div class="col-sm-12">
-                <input class="form-control" id="username" type="text" value="{{username}}" aria-label="{{username}}" readonly>
-                </div>   
-                <p></p>
-                <label for="account" class="col-sm-2 col-form-label" style="min-width: 115px;">Account</label>
-                <div class="col-sm-12">
-                <input class="form-control" id="account" type="text" value="{{account}}" aria-label="{{account}}" readonly>
-                </div>
-                <p></p>
-                <label for="email" class="col-sm-2 col-form-label" style="min-width: 115px;">Email</label>
-                <div class="col-sm-12">
-                <input class="form-control" id="email" type="text" value="{{email}}" aria-label="{{email}}" readonly>
-                </div>
-            </div>
+        <div class="vstack gap-3" id="delete_member">
+            <div class="p-2">Are you sure to delete the account?</div>
+            <input type="submit" value="Yes" class="submit">
         </div>
       </fieldset>
 
