@@ -18,3 +18,11 @@ class ModifyUserInfo(forms.ModelForm):
     class Meta: 
         model = UserInfo 
         fields = ['username', 'account', 'email', 'oldpassword', 'newpassword']
+
+class DeleteUser(forms.ModelForm):
+    """
+    刪除會員頁面的表格
+    """
+    class Meta: 
+        model = UserInfo 
+        fields = ['account', 'email', 'password']

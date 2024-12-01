@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
 from django.db import IntegrityError
-from myweb.form import UserInfoForm, ModifyUserInfo
+from myweb.form import UserInfoForm, ModifyUserInfo, DeleteUser
 from myweb.models import UserInfo
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password, check_password
+
 
 # Create your views here.
 def index(request):
@@ -93,10 +94,12 @@ def member_data(request):
         return redirect('/')
     
 def modify_data(request, email):
+
     """
     顯示會員的資料並讓使用者修改資料後上傳資料庫更改原本的資料
     """
     status = request.session.get("is_login")
+    email = request.session.get("email")
     if status:
         user = UserInfo.objects.get(email=email)
         form = ModifyUserInfo(instance=user)
@@ -118,13 +121,41 @@ def modify_data(request, email):
                     return HttpResponse(f"沒有儲存到資料庫:{str(e)}")
             else:
                 return HttpResponse("沒通過驗證")
-        return render(request, "enroll&login/modify.html", {"form":form, "user":user})
+        return render(request, "enroll&login/modify.html", {"form":form, "user":user, "email":email})
     else:
         return redirect("/")
     
 def delete_member(request):
+    """
+    刪除畫面，當使用者按下Yes，會跳出輸入帳號、密碼、信箱的警示窗，若按下delete則刪除帳號
+    """
     status = request.session.get("is_login")
     email = request.session.get("email")
-    if not status:
+    form = DeleteUser(request.POST)
+    if status:
+        if request.method == "POST":
+            if form.is_valid():
+                email = form.cleaned_data.get("email")
+                password = form.cleaned_data.get("password")
+                account = form.cleaned_data.get("account")
+                try:
+                    user = UserInfo.objects.get(email=email, account=account)
+                    if not check_password(password, user.password):
+                        messages.add_message(request, messages.WARNING, "Incorrect password")
+                        return redirect("delete_member")
+                    else:
+                        user.delete()
+                        logout(request)
+                        return redirect("/")
+                except UserInfo.DoesNotExist:
+                    messages.add_message(request, messages.ERROR, "Incorrect account or email")
+                    return redirect("delete_member")
+            else:
+                return HttpResponse("form驗證不成功")
+        return render(request, "enroll&login/delete.html", {"email":email})
+    else:
         return redirect("/")
-    return render(request, "enroll&login/delete.html", {"email":email})
+
+def logout(request):
+    request.session.flush()
+    return render(request, "index.html")
