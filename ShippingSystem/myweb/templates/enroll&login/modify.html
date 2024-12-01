@@ -61,7 +61,7 @@
             cursor: pointer;
             font-size: 20px;
             width: fit-content; 
-            margin-top: 250px;
+            margin-top: 110px;
         }
     .d-flex{
         justify-content: center;
@@ -73,7 +73,6 @@
 </style>
 {% endblock %}
 
-<!-----------------------這裡是會員資料----------------------------------------------------------------->
 {% block content %}
 <div class="container">
   <!-- 標題區域 -->
@@ -93,31 +92,34 @@
               </a>
           </div>
       </fieldset>
-      <!-- 內容顯示區 -->
+      <!-- 對應功能內容顯示區 -->
       <fieldset class="border border-2 rounded shadow p-3 mb-5 bg-body-tertiary rounded" id="functiondata" style="flex: 2; background-color: #FBFBFB;">
         <!--修改會員資料-->
-        <form action="{% url 'modify_data' user.email %}" method="post" class="vstack" style="align-items: center;">
+        <form action="{% url 'modify_data' user.email %}" method="post" class="vstack" style="align-items: center; max-height: 574px;">
             {% csrf_token %}
             {# form #}
             <div class="hstack gap-3">
-                <div id="user-data" class="row" style="min-width: 50%;">
+                <div id="user-data" class="row">
+                    <!--會員名稱輸入欄-->
                     <label for="username" class="col-sm-2 col-form-label" >
                         Username</label>
                     <div class="col-sm-12">
                     <input class="form-control" id="username" type="text" value="{{form.username.value}}" aria-label="{{form.username.value}}" name="{{form.username.name}}">
                     </div>   
                     <p></p>
+                    <!--會員信箱(隱藏)-->
                     <label for="email" class="col-sm-2 col-form-label" style="min-width: 115px;" hidden>Email</label>
                     <div class="col-sm-12">
                     <input class="form-control" id="email" type="text" value="{{form.email.value}}" aria-label="{{form.email.value}}" name="{{form.email.name}}" hidden>
                     </div>
-                    <label for="account" class="col-sm-2 col-form-label" style="min-width: 115px;">Account</label>
+                    <!--會員帳號(隱藏)-->
+                    <label for="account" class="col-sm-2 col-form-label" style="min-width: 115px;" hidden>Account</label>
                     <div class="col-sm-12">
-                    <input class="form-control" id="account" type="text" value="{{form.account.value}}" aria-label="{{form.account.value}}" name="{{form.account.name}}">
+                    <input class="form-control" id="account" type="text" value="{{form.account.value}}" aria-label="{{form.account.value}}" name="{{form.account.name}}" hidden>
                     </div>
-                </div>
-                <div id="user-data" class="row" style="max-width: 60%;">
+                    <!--輸入舊密碼-->
                     <label for="email" class="col-sm-2 col-form-label" style="min-width: 380px;">Old Password
+                        <!--如果舊密碼與資料庫不一致時顯示-->
                         {% if messages %}
                             {% for message in messages %}
                                 <samp style="font-size: 16px; color: red;">{{message}}</samp> 
@@ -128,12 +130,14 @@
                     <input class="form-control" id="OldPassword" type="password"  name="{{form.oldpassword.name}}" >
                     </div>
                     <p></p>
+                    <!--輸入新密碼-->
                     <label for="email" class="col-sm-2 col-form-label" style="min-width: 200px;">New Password</label>
                     <div class="col-sm-12">
                     <input class="form-control" id="NewPassword" type="password"  name="{{form.newpassword.name}}">
                     </div>
                 </div>
             </div>
+            <!--修改資料送出按鈕-->
             <input type="submit" value="update" class="submit">
         </form>
       </fieldset>

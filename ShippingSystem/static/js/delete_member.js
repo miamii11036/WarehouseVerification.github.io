@@ -1,4 +1,4 @@
-document.getElementById("delete_member_button").addEventListener("click", function() {
+document.getElementById("delete_member_button").addEventListener("click", function () {
     const modal = new bootstrap.Modal(document.getElementById("deleteModal"));
     modal.show();
 });

@@ -83,11 +83,11 @@
 </style>
 {% endblock %}
 
-<!-----------------------這裡是會員資料----------------------------------------------------------------->
 {% block content %}
 <div class="container">
   <!-- 標題區域 -->
   <div id="title" class="text-start fs-1 fw-bold ">Delete member</div>
+  <!--功能列表方框-->
   <div class="d-flex mt-4" style="gap: 20px;">
       <!-- 功能列表 -->
       <fieldset class="border border-2 rounded p-3 shadow p-3 mb-5 bg-body-tertiary rounded" id="functionlist" style="flex: 1; background-color: #FBFBFB;">
@@ -103,12 +103,14 @@
               </a>
           </div>
       </fieldset>
-      <!-- 內容顯示區 -->
+      <!-- 對應功能內容顯示區 -->
       <fieldset class="border border-2 rounded shadow p-3 mb-5 bg-body-tertiary rounded" id="functiondata" style="flex: 2; background-color: #FBFBFB;">
+        <!--刪除帳號前確認-->
         <div class="vstack gap-3" id="delete_member">
             <div class="p-2">Are you sure to delete the account?</div>
             <input type="submit" value="Yes" class="submit" id="delete_member_button">
         </div>
+        <!--當輸入錯誤的帳號/信箱/密碼時顯示-->
         {% if messages %}
             <div class="alert alert-danger d-flex align-items-center" role="alert" >
                 <svg class="bi flex-shrink-0 me-2" role="img" aria-label="Danger:" style="max-width: 50px; max-height:50px;"><use xlink:href="#exclamation-triangle-fill"/></svg>
@@ -118,10 +120,10 @@
             </div>
         {% endif %}
       </fieldset>
-
   </div>
 </div>
 
+<!--當按下Yes時跳出來的警示視窗，使用者需要輸入帳號、信箱、密碼才能刪除帳號-->
 <div id="deleteModal" class="modal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">

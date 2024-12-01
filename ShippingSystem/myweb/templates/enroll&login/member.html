@@ -62,7 +62,7 @@
 </style>
 {% endblock %}
 
-<!-----------------------這裡是會員資料----------------------------------------------------------------->
+
 {% block content %}
 <div class="container">
   <!-- 標題區域 -->
@@ -82,22 +82,25 @@
               </a>
           </div>
       </fieldset>
-      <!-- 內容顯示區 -->
+      <!-- 對應功能內容顯示區 -->
       <fieldset class="border border-2 rounded shadow p-3 mb-5 bg-body-tertiary rounded" id="functiondata" style="flex: 2; background-color: #FBFBFB;">
         <!--會員基本資料-->
         <div class="hstack gap-3">
             <div id="user-data" class="row">
+                <!--會員名稱-->
                 <label for="username" class="col-sm-2 col-form-label" style="min-width: 115px;">
                         Username</label>
                 <div class="col-sm-12">
                 <input class="form-control" id="username" type="text" value="{{username}}" aria-label="{{username}}" readonly>
                 </div>   
                 <p></p>
+                <!--會員帳號-->
                 <label for="account" class="col-sm-2 col-form-label" style="min-width: 115px;">Account</label>
                 <div class="col-sm-12">
                 <input class="form-control" id="account" type="text" value="{{account}}" aria-label="{{account}}" readonly>
                 </div>
                 <p></p>
+                <!--會員信箱-->
                 <label for="email" class="col-sm-2 col-form-label" style="min-width: 115px;">Email</label>
                 <div class="col-sm-12">
                 <input class="form-control" id="email" type="text" value="{{email}}" aria-label="{{email}}" readonly>

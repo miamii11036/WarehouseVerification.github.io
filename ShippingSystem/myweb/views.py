@@ -31,9 +31,11 @@ def enroll(request):
                 request.session["username"] = campare_user.username
                 return redirect("/enrollok") 
             except IntegrityError as e:
-                # 捕捉資料庫完整性錯誤（如 email 重複）
+                #如果信箱與帳號已存在於資料庫中
                 print(f"IntegrityError: {e}")
-                error_message = "電子郵件已被註冊"
+                messages.add_message(request, messages.ERROR, "account or email has existed")
+                return redirect("/enroll")
+            
             except Exception as e:
                 print(f"Error during saving user: {e}")
                 error_message = "註冊失敗，請稍後再試"
@@ -76,7 +78,7 @@ def user_login(request):
 
 def member_data(request):
     """
-    登入成功時要檢查狀態is_login是否為True，才能進此頁面
+    登入成功時要檢查狀態is_login是否為True，才能進此頁面，並呈現使用者資料
     """
     status=request.session.get('is_login')
     if not status:
@@ -94,9 +96,8 @@ def member_data(request):
         return redirect('/')
     
 def modify_data(request, email):
-
     """
-    顯示會員的資料並讓使用者修改資料後上傳資料庫更改原本的資料
+    顯示會員的資料並讓使用者修改資料後上傳資料庫更改原本的資料，成功時則跳轉至會員資料頁面
     """
     status = request.session.get("is_login")
     email = request.session.get("email")
@@ -127,7 +128,8 @@ def modify_data(request, email):
     
 def delete_member(request):
     """
-    刪除畫面，當使用者按下Yes，會跳出輸入帳號、密碼、信箱的警示窗，若按下delete則刪除帳號
+    刪除畫面，當使用者按下Yes，會跳出輸入帳號、密碼、信箱的警示窗，並比對使用者輸入的資料是否與資料庫一致，
+    成功時返回首頁並刪除資料庫中的使用者資料
     """
     status = request.session.get("is_login")
     email = request.session.get("email")
@@ -157,5 +159,8 @@ def delete_member(request):
         return redirect("/")
 
 def logout(request):
+    """
+    執行時返回至首頁，並消除所有的session
+    """
     request.session.flush()
     return render(request, "index.html")

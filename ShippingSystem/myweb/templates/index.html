@@ -67,6 +67,7 @@
                     <span class="input-group-text"><img src="{% static 'image/2.png' %}" style="height: 35px; width: 35px;" ></span>
                     <input type="password" class="form-control" placeholder="Password" aria-label="Password" name="password">
                 </div>
+                <!--帳號與密碼輸入錯誤時顯示-->
                 {% if messages %}
                     {% for message in messages %}
                         <div style="font-size: 16px; color: red;">{{message}}</div> 

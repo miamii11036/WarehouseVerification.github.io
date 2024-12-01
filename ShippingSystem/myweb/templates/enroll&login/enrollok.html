@@ -35,17 +35,18 @@
     {% load static %}
 </head>
 <body>
+    <!--註冊成功顯示的內容-->
     <div class="containers">
     <img src="{% static 'image/1.png' %}">
     <div class="title">註冊成功</div>
     <img src="{% static 'image/1.png' %}">
     </div>
     <div class="content">歡迎 {{username}} 加入</div>
-    <div>3秒後自動跳轉回首頁...</div>
+    <div>2秒後自動跳轉回首頁...</div>
     
    <script>
     window.onload = function(){
-        setTimeout(function(){window.location.href='/';}, 3000);
+        setTimeout(function(){window.location.href='/';}, 2000);
     };
    </script>
 </body>

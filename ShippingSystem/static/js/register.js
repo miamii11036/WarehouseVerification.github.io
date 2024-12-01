@@ -7,7 +7,8 @@ function ConfirmPassword(Password, Confirm_password, Error_message, event) {
         event.preventDefault();
         Error_message.textContent="password not match";
     };
-}   
+} 
+  
 //*顯示密碼*//
 function displaypassword(ShowPasswordCheckBox, Password, Confirm_password) {
     const type = ShowPasswordCheckBox.checked ? 'text' : 'password';
@@ -15,9 +16,4 @@ function displaypassword(ShowPasswordCheckBox, Password, Confirm_password) {
     /*?:是一個條件運算子，其運用方式為   <條件 如checked> ? 如果條件為true的值 : 如果條件為false的值 */
     Password.type = type;
     Confirm_password.type = type;
-}
-
-//*顯示註冊錯誤視窗*//
-function showerror(Error_message) {
-    window.alert(Error_message);
 }
