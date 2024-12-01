@@ -66,7 +66,7 @@
 {% block content %}
 <div class="container">
   <!-- 標題區域 -->
-  <div id="title" class="text-start fs-1 fw-bold ">{{username}} 歡迎回來</div>
+  <div id="title" class="text-start fs-1 fw-bold ">{{username}} Welcome back</div>
   <div class="d-flex mt-4" style="gap: 20px;">
       <!-- 功能列表 -->
       <fieldset class="border border-2 rounded p-3 shadow p-3 mb-5 bg-body-tertiary rounded" id="functionlist" style="flex: 1; background-color: #FBFBFB;">
@@ -93,14 +93,14 @@
                 <input class="form-control" id="username" type="text" value="{{username}}" aria-label="{{username}}" readonly>
                 </div>   
                 <p></p>
-                <label for="email" class="col-sm-2 col-form-label" style="min-width: 115px;">Email</label>
-                <div class="col-sm-12">
-                <input class="form-control" id="email" type="text" value="{{email}}" aria-label="{{email}}" readonly>
-                </div>
-                <p></p>
                 <label for="account" class="col-sm-2 col-form-label" style="min-width: 115px;">Account</label>
                 <div class="col-sm-12">
                 <input class="form-control" id="account" type="text" value="{{account}}" aria-label="{{account}}" readonly>
+                </div>
+                <p></p>
+                <label for="email" class="col-sm-2 col-form-label" style="min-width: 115px;">Email</label>
+                <div class="col-sm-12">
+                <input class="form-control" id="email" type="text" value="{{email}}" aria-label="{{email}}" readonly>
                 </div>
             </div>
         </div>

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
 from django.db import IntegrityError
-from myweb.form import UserInfoForm
+from myweb.form import UserInfoForm, ModifyUserInfo
 from myweb.models import UserInfo
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password, check_password
@@ -99,16 +99,23 @@ def modify_data(request, email):
     status = request.session.get("is_login")
     if status:
         user = UserInfo.objects.get(email=email)
-        form = UserInfoForm(instance=user)
+        form = ModifyUserInfo(instance=user)
         if request.method == "POST":
-            form = UserInfoForm(request.POST, instance=user)
+            form = ModifyUserInfo(request.POST, instance=user)
             if form.is_valid():
+                oldpassword = form.cleaned_data.get("oldpassword")
+                newpassword = form.cleaned_data.get("newpassword")
                 try:
-                    form.save()
-                    request.session["is_login"] = True
-                    return redirect("member_data")
-                except:
-                    return HttpResponse("沒有儲存到資料庫")
+                    if not check_password(oldpassword, user.password):
+                        messages.add_message(request, messages.ERROR, "Incorrect password")
+                        return redirect("modify_data", email=email)
+                    else:
+                        user.password = make_password(newpassword)
+                        user.save()
+                        request.session["is_login"] = True
+                        return redirect("member_data")                      
+                except Exception as e:
+                    return HttpResponse(f"沒有儲存到資料庫:{str(e)}")
             else:
                 return HttpResponse("沒通過驗證")
-        return render(request, "enroll&login/modify.html", locals())
+        return render(request, "enroll&login/modify.html", {"form":form, "user":user})

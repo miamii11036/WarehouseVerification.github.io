@@ -9,3 +9,12 @@ class UserInfoForm(forms.ModelForm):
         model = UserInfo
         fields = ["username", "account", "password", "email"] #此為表格的columns
 
+class ModifyUserInfo(forms.ModelForm):
+    """
+    取得修改會員資料頁面的資料
+    """
+    oldpassword = forms.CharField(max_length=128)
+    newpassword = forms.CharField(max_length=128)
+    class Meta: 
+        model = UserInfo 
+        fields = ['username', 'account', 'email', 'oldpassword', 'newpassword']
