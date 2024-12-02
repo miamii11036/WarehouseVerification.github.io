@@ -25,7 +25,6 @@
             } 
         }
 
-        
         .border.border-2.shadow.p-3.mb-5.bg-body-tertiary.rounded {
             flex: 1; 
             margin-top: 50px; 
@@ -37,7 +36,9 @@
             margin-top: 50px;
             margin-bottom: 20px !important;
         }
-
+        .input-group.mb-3 {
+            margin-bottom: 0px !important;
+        }
     </style>
 {% endblock %}
 <!-------body-----想法:使用者輸入orderId後，系統會自動在表格中搜尋對應的ID，找到後該列會反藍並展開order的詳細內容---------
@@ -49,7 +50,7 @@
     <form action="" method="post" class="hstack gap-3"> 
         <div class="input-group mb-3" style="margin-bottom: 0px !important;">
             <div class="input-group-text" id="OrderID">Order ID</div>
-            <input type="text" class="form-control" aria-label="OrderID">
+            <input type="text" class="form-control" id="order_id" name="order_id" aria-label="OrderID" >
         </div>
         <!--查詢按鈕-->
         <button class="btn btn-outline-secondary" type="button" id="OrderIDSearchButton">Search</button> 
@@ -60,30 +61,30 @@
     <form>
         <div class="hstack gap-3">
             <!--年份-->
-            <div class="input-group mb-3" style="margin-bottom: 0px !important;">
+            <div class="input-group mb-3">
                 <span class="input-group-text" id="Year">Year</span>
-                <input type="text" class="form-control" name="year">
+                <input type="text" class="form-control" id="year" name="year">
             </div>
             <!--月份-->
-            <div class="input-group mb-3" style="margin-bottom: 0px !important;">
+            <div class="input-group mb-3">
                 <span class="input-group-text"  id="Month">Month</span>
-                <select class="form-select">
-                    <option selected value="1" name="1">January(1)</option>
-                    <option value="2" name="2">February(2)</option>
-                    <option value="3" name="3">March(3)</option>
-                    <option value="4" name="4">April(4)</option>
-                    <option value="5" name="5">May(5)</option>
-                    <option value="6" name="6">June(6)</option>
-                    <option value="7" name="7">July(7)</option>
-                    <option value="8" name="8">August(8)</option>
-                    <option value="9" name="9">September(9)</option>
-                    <option value="10" name="10">October(10)</option>
-                    <option value="11" name="11">November(11)</option>
-                    <option value="12" name="12">December(12)</option>
+                <select class="form-select" name="month">
+                    <option selected value="1">January(1)</option>
+                    <option value="2">February(2)</option>
+                    <option value="3">March(3)</option>
+                    <option value="4">April(4)</option>
+                    <option value="5">May(5)</option>
+                    <option value="6">June(6)</option>
+                    <option value="7">July(7)</option>
+                    <option value="8">August(8)</option>
+                    <option value="9">September(9)</option>
+                    <option value="10">October(10)</option>
+                    <option value="11">November(11)</option>
+                    <option value="12">December(12)</option>
                 </select>
             </div>
             <!--地區-->
-            <div class="input-group mb-3" style="margin-bottom: 0px !important;">
+            <div class="input-group mb-3">
                 <span class="input-group-text" id="Region">Region</span>
                 <input type="text" class="form-control" name="region">
             </div>
@@ -91,7 +92,7 @@
             <div class="hstack gap-3">
                 <button class="btn btn-outline-secondary" type="button" id="FilterSearch">Search</button> 
                 <div class="vr"></div>
-                <button  type="button" class="btn btn-outline-secondary" style="border-color: #46656F; ">Reset</button>
+                <button  type="button" class="btn btn-outline-secondary">Reset</button>
             </div>
         </div>
     </form>
@@ -116,4 +117,5 @@
 </div>
 
 <!--訂單詳細內容-->
+<div id="order-details-container"></div>
 {% endblock %}
