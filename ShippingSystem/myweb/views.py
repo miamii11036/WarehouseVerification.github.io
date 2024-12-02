@@ -164,3 +164,6 @@ def logout(request):
     """
     request.session.flush()
     return render(request, "index.html")
+
+def search(request):
+    return render(request, "execute/search.html")

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Search{% endblock %}
+
+{% block head %}
+    <style>
+        .submit{
+             /* 按鈕與輸入框的間距 */
+            padding: 7.5px 13px;
+            background-color: #46656F; /* 按鈕背景色 */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 15px;
+            width: fit-content; 
+        }
+        body{
+            height: 100vh;
+            
+        }
+    @media  (max-width: 468px) {
+        .hstack gap-3 {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+    </style>
+{% endblock %}
+<!-------body-----想法:使用者輸入orderId後，系統會自動在表格中搜尋對應的ID，找到後該列會反藍並展開order的詳細內容---------
+----------------------提供篩選條件，讓使用者篩選出特定範圍內的訂單清單------搜尋ID可以用相機掃描QRCODE-------------------------------->
+
+{% block content %}
+<!--查詢orderID輸入框-->
+<div class="border border-2 rounded p-3 shadow p-3 mb-5 bg-body-tertiary rounded"  style="flex: 1; margin-top: 50px; max-width: 500px;">
+    <form action="" method="post" class="hstack gap-3"> 
+        <div class="input-group mb-3" style="margin-bottom: 0px !important;">
+            <div class="input-group-text" id="OrderID">Order ID</div>
+            <input type="text" class="form-control" aria-label="OrderID" aria-describedby="basic-addon1">
+        </div>
+        <!--查詢按鈕-->
+        <button class="submit" type="button" id="OrderIDSearch">Search</button> 
+    </form>
+</div>
+<!--篩選範圍-->
+<div class="border border-2 rounded p-3 shadow p-3 mb-5 bg-body-tertiary rounded"  style="flex: 1; margin-top: 50px; max-width: 950px;">
+    <form>
+        <div class="hstack gap-3">
+            <!--年份-->
+            <div class="input-group mb-3" style="margin-bottom: 0px !important;">
+                <span class="input-group-text" id="Year">Year</span>
+                <input type="text" class="form-control" name="year">
+            </div>
+            <!--月份-->
+            <div class="input-group mb-3" style="margin-bottom: 0px !important;">
+                <span class="input-group-text"  id="Month">Month</span>
+                <select class="form-select">
+                    <option selected value="1" name="1">January(1)</option>
+                    <option value="2" name="2">February(2)</option>
+                    <option value="3" name="3">March(3)</option>
+                    <option value="4" name="4">April(4)</option>
+                    <option value="5" name="5">May(5)</option>
+                    <option value="6" name="6">June(6)</option>
+                    <option value="7" name="7">July(7)</option>
+                    <option value="8" name="8">August(8)</option>
+                    <option value="9" name="9">September(9)</option>
+                    <option value="10" name="10">October(10)</option>
+                    <option value="11" name="11">November(11)</option>
+                    <option value="12" name="12">December(12)</option>
+                </select>
+            </div>
+            <!--地區-->
+            <div class="input-group mb-3" style="margin-bottom: 0px !important;">
+                <span class="input-group-text" id="Region">Region</span>
+                <input type="text" class="form-control" name="region">
+            </div>
+            <!--提交按鈕與重置按鈕-->
+            <div class="hstack gap-3">
+                <button class="submit" type="button" id="FilterSearch">Search</button> 
+                <div class="vr"></div>
+                <button  type="button" class="btn btn-outline-secondary" style="border-color: #46656F; ">Reset</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="border border-2 rounded p-3 shadow p-3 mb-5 bg-body-tertiary rounded"  style="flex: 1; margin-top: 50px;">
+    <table class="table table-striped">
+        <thead class="table-light">
+            <th style="width: 100px;">Order ID</th>
+            <th style="width: 100px;">Year</th>
+            <th style="width: 100px;">Month</th>
+            <th style="width: 100px;">Region</th>
+            <th style="width: 100px;">Client</th>
+            <th style="width: 100px;">Status</th>
+        </thead>
+        <tbody>
+            <tr>  <td>1</td> <td>2024</td> <td>May</td> <td>Kaohsiung</td> <td>TA</td> <td>Process A</td>  </tr>
+            <tr>  <td>2</td> <td>2024</td> <td>July</td> <td>Taipei</td> <td>CA</td> <td>Process B</td>  </tr>
+        </tbody>
+        </tbody>
+    </table>
+</div>
+
+<!--訂單詳細內容-->
+{% endblock %}
+
