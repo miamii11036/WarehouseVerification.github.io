@@ -4,27 +4,40 @@
 
 {% block head %}
     <style>
-        .submit{
-             /* 按鈕與輸入框的間距 */
-            padding: 7.5px 13px;
-            background-color: #46656F; /* 按鈕背景色 */
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 15px;
-            width: fit-content; 
-        }
         body{
-            height: 100vh;
-            
+            height: 100vh;   
         }
-    @media  (max-width: 468px) {
-        .hstack gap-3 {
-            flex-direction: column;
-            align-items: flex-start;
+        .btn-outline-secondary{
+            --bs-btn-color: #46656F;
+            --bs-btn-border-color: #46656F;
+            --bs-btn-hover-color: #FBFBFB;
+            --bs-btn-hover-bg: #46656F;
+            --bs-btn-hover-border-color:--bs-btn-hover-border-color: #46656F;
+            --bs-btn-active-color: #FBFBFB;
+            --bs-btn-active-bg: #46656F;
+            --bs-btn-active-border-color: #46656F;
+            --bs-btn-disabled-color: #46656F;
+            --bs-btn-disabled-border-color: #46656F;
         }
-    }
+        @media (max-width: 700px) { 
+            .responsive-form { 
+                flex-direction: column; 
+            } 
+        }
+
+        
+        .border.border-2.shadow.p-3.mb-5.bg-body-tertiary.rounded {
+            flex: 1; 
+            margin-top: 50px; 
+            min-width: 700px; 
+            margin: auto;
+        }
+        #OrderIDSearch {
+            max-width: 1450px; 
+            margin-top: 50px;
+            margin-bottom: 20px !important;
+        }
+
     </style>
 {% endblock %}
 <!-------body-----想法:使用者輸入orderId後，系統會自動在表格中搜尋對應的ID，找到後該列會反藍並展開order的詳細內容---------
@@ -32,18 +45,18 @@
 
 {% block content %}
 <!--查詢orderID輸入框-->
-<div class="border border-2 rounded p-3 shadow p-3 mb-5 bg-body-tertiary rounded"  style="flex: 1; margin-top: 50px; max-width: 500px;">
+<div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded" id="OrderIDSearch">
     <form action="" method="post" class="hstack gap-3"> 
         <div class="input-group mb-3" style="margin-bottom: 0px !important;">
             <div class="input-group-text" id="OrderID">Order ID</div>
-            <input type="text" class="form-control" aria-label="OrderID" aria-describedby="basic-addon1">
+            <input type="text" class="form-control" aria-label="OrderID">
         </div>
         <!--查詢按鈕-->
-        <button class="submit" type="button" id="OrderIDSearch">Search</button> 
+        <button class="btn btn-outline-secondary" type="button" id="OrderIDSearchButton">Search</button> 
     </form>
 </div>
 <!--篩選範圍-->
-<div class="border border-2 rounded p-3 shadow p-3 mb-5 bg-body-tertiary rounded"  style="flex: 1; margin-top: 50px; max-width: 950px;">
+<div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded"  style="max-width: 1450px;">
     <form>
         <div class="hstack gap-3">
             <!--年份-->
@@ -76,7 +89,7 @@
             </div>
             <!--提交按鈕與重置按鈕-->
             <div class="hstack gap-3">
-                <button class="submit" type="button" id="FilterSearch">Search</button> 
+                <button class="btn btn-outline-secondary" type="button" id="FilterSearch">Search</button> 
                 <div class="vr"></div>
                 <button  type="button" class="btn btn-outline-secondary" style="border-color: #46656F; ">Reset</button>
             </div>
@@ -84,7 +97,7 @@
     </form>
 </div>
 
-<div class="border border-2 rounded p-3 shadow p-3 mb-5 bg-body-tertiary rounded"  style="flex: 1; margin-top: 50px;">
+<div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded"  style="max-width: 2100px;">
     <table class="table table-striped">
         <thead class="table-light">
             <th style="width: 100px;">Order ID</th>
@@ -104,4 +117,3 @@
 
 <!--訂單詳細內容-->
 {% endblock %}
-
