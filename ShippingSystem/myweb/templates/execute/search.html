@@ -3,6 +3,8 @@
 {% block title %}Search{% endblock %}
 
 {% block head %}
+    <!--載入jquery函數庫-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
     <style>
         body{
             height: 100vh;   
@@ -56,7 +58,7 @@
         <button class="btn btn-outline-secondary" type="button" id="OrderIDSearchButton">Search</button> 
     </form>
 </div>
-<!--篩選範圍-->
+<!--篩選範圍設定框-->
 <div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded"  style="max-width: 1450px;">
     <form>
         <div class="hstack gap-3">
@@ -98,6 +100,7 @@
     </form>
 </div>
 
+<!--訂單列表-->
 <div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded"  style="max-width: 2100px;">
     <table class="table table-striped">
         <thead class="table-light">
@@ -108,14 +111,39 @@
             <th style="width: 100px;">Client</th>
             <th style="width: 100px;">Status</th>
         </thead>
-        <tbody>
-            <tr>  <td>1</td> <td>2024</td> <td>May</td> <td>Kaohsiung</td> <td>TA</td> <td>Process A</td>  </tr>
-            <tr>  <td>2</td> <td>2024</td> <td>July</td> <td>Taipei</td> <td>CA</td> <td>Process B</td>  </tr>
-        </tbody>
+        <tbody> 
+            {% for order in orders %}
+            <!--填入每一張訂單-->
+            <tr class="order-list" data-order-id="{{order.id}}">
+                                <!--data-order-id為自定義屬性，使用data-*屬性可以在script區域中使用data()來取得該屬性的值-->
+                <td>{{order.order_id}}</td>
+                <td>{{order.year}}</td>
+                <td>{{order.month}}</td>
+                <td>{{order.region}}</td>
+                <td>{{order.client}}</td>
+                <td>{{order.status}}</td>
+            </tr>
+            <!--設定訂單的詳細內容品項表格-->
+            <tr class="order-detail" id="order-detail-{{order.id}}">
+                <td colspan="6"> <!--合併一列的儲存格，與order-list表格做出區別，因為兩個table的column數量不一樣-->
+                    <!--開始填入order-detail的內容-->
+                    <table>
+                        <thead>
+                            <th>Product ID</th>
+                            <th>Product name</th>
+                            <th>Quantity</th>
+                            <th>Package</th>
+                            <th>Weight</th>
+                        </thead>
+                        <tbody class="order-detail-data"><!--Json傳遞過來的資料開始填入-->
+                            
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            {% endfor %}
         </tbody>
     </table>
 </div>
 
-<!--訂單詳細內容-->
-<div id="order-details-container"></div>
 {% endblock %}

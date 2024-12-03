@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
 from django.db import IntegrityError
 from myweb.form import UserInfoForm, ModifyUserInfo, DeleteUser
-from myweb.models import UserInfo
+from myweb.models import UserInfo, OrderList, OrderDetail
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password, check_password
 
@@ -166,4 +166,25 @@ def logout(request):
     return render(request, "index.html")
 
 def search(request):
-    return render(request, "execute/search.html")
+    """
+    把資料庫中名為OderList的table資料丟過去網頁中
+    """
+    orders = OrderList.objects.all()
+    return render(request, "execute/search.html", {"orders":orders})
+
+def order_detail(request, order_id):
+    """
+    取得order_id後，在資料庫中名為OrderDetail的table中，尋找對應order_id的所有資料
+    因為一張訂單通常會有很多筆品項，所以order變數會儲存很多不同的product_id的相關資料，然後把他們全部丟掉網頁上
+    """
+    order = OrderDetail.objects.filter(order_id=order_id)
+    orderdetail = [
+        {
+            "product_id":order.product_id,
+            "product_name":order.product_name,
+            "quantity":float(order.quantity),
+            "package":order.package
+        }
+        for good in order
+    ]
+    return JsonResponse({"orderdetail":orderdetail})

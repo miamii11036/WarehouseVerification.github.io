@@ -14,26 +14,35 @@ class UserInfo(models.Model):
 
 class OrderList(models.Model):
     """
-    建立Order清單資料庫
+    建立所有Order清單的資料庫table
     """
-    id = models.AutoField(primary_key=True)
+    order_id = models.AutoField(primary_key=True)
     year = models.IntegerField()
-    month = models.IntegerField(
+    month = models.IntegerField( 
         validators=[
             MinValueValidator(1),
             MaxValueValidator(12)
         ]
     )
     region = models.CharField(max_length=100)
+    client = models.CharField(max_length=100)
     status = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"order_id:{self.order_id}, year:{self.year}, month:{self.month}, region:{self.region}, client:{self.client}, status:{self.status}"
+        #一旦views.py呼叫資料庫並載入資料時不會出現 <OrderList: OrderList object (1)>這種阻礙系統讀取重要資料的資訊
+        #有點像用一般for迴圈輸出二維串列中的每一個一維串列元素，若直接print二維串列中的某一個一維串列，一定會有[]
 
 class OrderDetail(models.Model):
     """
-    建立Order內容的詳細品項清單
+    建立某一張Order的內容品項清單 之 資料庫table
     """
     order_id = models.ForeignKey(OrderList, on_delete=models.CASCADE, related_name="items")
     product_id = models.IntegerField()
     product_name = models.CharField(max_length=100)
-    quantity = models.IntegerField()
+    quantity = models.DecimalField(max_digits=10, decimal_places=2)
     package = models.CharField()
+
+    def __str__(self):
+        return f"order_id:{self.order_id}, product_id:{self.product_id}, product_name:{self.product_name}, quantity:{self.quantity}, package:{self.package}"
 
