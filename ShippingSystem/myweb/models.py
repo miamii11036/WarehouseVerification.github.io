@@ -26,7 +26,7 @@ class OrderList(models.Model):
     )
     region = models.CharField(max_length=100)
     client = models.CharField(max_length=100)
-    status = models.CharField(max_length=100)
+    status = models.CharField(max_length=100, default="start")
 
     def __str__(self):
         return f"order_id:{self.order_id}, year:{self.year}, month:{self.month}, region:{self.region}, client:{self.client}, status:{self.status}"
@@ -37,12 +37,13 @@ class OrderDetail(models.Model):
     """
     建立某一張Order的內容品項清單 之 資料庫table
     """
-    order_id = models.ForeignKey(OrderList, on_delete=models.CASCADE, related_name="items")
-    product_id = models.IntegerField()
+    product_id = models.IntegerField(primary_key=True)
     product_name = models.CharField(max_length=100)
     quantity = models.DecimalField(max_digits=10, decimal_places=2)
     package = models.CharField()
+    
+    order_id = models.ForeignKey(OrderList, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"order_id:{self.order_id}, product_id:{self.product_id}, product_name:{self.product_name}, quantity:{self.quantity}, package:{self.package}"
+        return f"product_id:{self.product_id}, product_name:{self.product_name}, quantity:{self.quantity}, package:{self.package}, order_id:{self.order_id}"
 
