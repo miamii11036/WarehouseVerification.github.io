@@ -33,16 +33,27 @@ class OrderList(models.Model):
         #一旦views.py呼叫資料庫並載入資料時不會出現 <OrderList: OrderList object (1)>這種阻礙系統讀取重要資料的資訊
         #有點像用一般for迴圈輸出二維串列中的每一個一維串列元素，若直接print二維串列中的某一個一維串列，一定會有[]
 
+class Product(models.Model):
+    """
+    儲存所有Product資訊的table
+    """
+    product_id = models.AutoField(primary_key=True)
+    product_name = models.CharField(max_length=200)
+    product_type = models.CharField(max_length=100)
+    product_inventory = models.IntegerField()
+    product_position = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"product_id:{self.product_id}, product_name:{self.product_name}, product_type:{self.product_type}, product_inventory:{self.product_inventory}, product_position:{self.product_position}"
+
 class OrderDetail(models.Model):
     """
     建立某一張Order的內容品項清單 之 資料庫table
     """
-    product_id = models.IntegerField(primary_key=True)
-    product_name = models.CharField(max_length=100)
+    product_id = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="orderdetail_product_id")
     quantity = models.DecimalField(max_digits=10, decimal_places=2)
-    package = models.CharField()
-    order_id = models.ForeignKey(OrderList, on_delete=models.CASCADE)
+    package = models.CharField(max_length=255)
+    order_id = models.ForeignKey(OrderList, on_delete=models.CASCADE, related_name="orderlist_order_id")
 
     def __str__(self):
-        return f"product_id:{self.product_id}, product_name:{self.product_name}, quantity:{self.quantity}, package:{self.package}, order_id:{self.order_id}"
-
+        return f"product_id:{self.product_id.product_id}, product_name:{self.product_id.product_name}, product_type:{self.product_id.product_type} quantity:{self.quantity}, package:{self.package}, order_id:{self.order_id.order_id}"

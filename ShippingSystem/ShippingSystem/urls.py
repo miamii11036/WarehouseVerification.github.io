@@ -26,7 +26,7 @@ urlpatterns = [
     path("enrollok/", enrollok),
     path("login/", user_login, name="login"),
     path("member/data/", member_data, name="member_data"),
-    path("member/modify/<str:email>", modify_data, name="modify_data"),
+    path("member/modify/<str:email>/", modify_data, name="modify_data"),
     path("member/delete", delete_member, name="delete_member"),
     path("logout/", logout),
     path("search/", search, name="search"),

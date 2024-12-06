@@ -177,14 +177,18 @@ def order_detail(request, order_id):
     取得order_id後，在資料庫中名為OrderDetail的table中，尋找對應order_id的所有資料
     因為一張訂單通常會有很多筆品項，所以order變數會儲存很多不同的product_id的相關資料，然後把他們全部丟掉網頁上
     """
-    products = OrderDetail.objects.filter(order_id=order_id)
-    orderdetail = [
-        {
-            "product_id":product.product_id,
-            "product_name":product.product_name,
-            "quantity":float(product.quantity),
-            "package":product.package
-        }
-        for product in products
-    ]
-    return JsonResponse({"orderdetail":orderdetail})
+    try:
+        products = OrderDetail.objects.filter(order_id_id=order_id)
+        orderdetail = [
+            {
+                "product_id":product.product_id.product_id,
+                "product_name":product.product_id.product_name,
+                "product_type":product.product_id.product_type,
+                "quantity":float(product.quantity),
+                "package":product.package
+            }
+            for product in products
+        ]
+        return JsonResponse({"orderdetail":orderdetail})
+    except Exception as e:
+        return JsonResponse({'error': 'Internal Server Error'}, status=500)

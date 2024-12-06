@@ -151,6 +151,7 @@
                         <thead class="table-light">
                             <th>Product ID</th>
                             <th>Product name</th>
+                            <th>Product type</th>
                             <th>Quantity</th>
                             <th>Package</th>
                         </thead>
@@ -168,32 +169,32 @@
 
 
 <script>
-/*document.addEventListener("DOMContentLoaded", function () {
-    // 選取所有的 Expand/Hide 按鈕
-    const expandButtons = document.querySelectorAll(".expand-btn");
+// document.addEventListener("DOMContentLoaded", function () {
+//     // 選取所有的 Expand/Hide 按鈕
+//     const expandButtons = document.querySelectorAll(".expand-btn");
 
-    expandButtons.forEach(button => {
-        button.addEventListener("click", function () {
-            // 找到按鈕所在的父層 <tr>
-            const orderRow = this.closest("tr");
-            // 取得對應的詳細內容行 (order-detail)
-            const orderId = orderRow.dataset.orderId;
-            const detailRow = document.querySelector(`#order-detail-${orderId}`);
+//     expandButtons.forEach(button => {
+//         button.addEventListener("click", function () {
+//             // 找到按鈕所在的父層 <tr>
+//             const orderRow = this.closest("tr");
+//             // 取得對應的詳細內容行 (order-detail)
+//             const orderId = orderRow.dataset.orderId;
+//             const detailRow = document.querySelector(`#order-detail-${orderId}`);
 
-            if (detailRow) {
-                // 切換 display 屬性
-                if (detailRow.style.display === "none" || detailRow.style.display === "") {
-                    detailRow.style.display = "table-row"; // 顯示
-                } else {
-                    detailRow.style.display = "none"; // 隱藏
-                }
-            }
-        });
-    });
-});*/
+//             if (detailRow) {
+//                 // 切換 display 屬性
+//                 if (detailRow.style.display === "none" || detailRow.style.display === "") {
+//                     detailRow.style.display = "table-row"; // 顯示
+//                 } else {
+//                     detailRow.style.display = "none"; // 隱藏
+//                 }
+//             }
+//         });
+//     });
+// });
     
 $(document).ready(function () {
-    $(document).on("click", ".expand-btn", function () {
+    $(`.expand-btn`).on("click", function () {
         const row = $(this).closest("tr");
         const orderid = row.data("order-id");
         const orderdetail = $(`#order-detail-${orderid}`);
@@ -214,6 +215,7 @@ $(document).ready(function () {
                             <tr>
                                 <td>${product.product_id}</td>
                                 <td>${product.product_name}</td>
+                                <td>${product.product_type}</td>
                                 <td>${product.quantity}</td>
                                 <td>${product.package}</td>
                             </tr>
