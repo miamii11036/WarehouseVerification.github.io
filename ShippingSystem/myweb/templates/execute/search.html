@@ -64,7 +64,7 @@
             margin: 10px 0px;
         }
         .table.table-hover {
-            --bs-table-hover-bg:#D8DFE5;
+            --bs-table-hover-bg:#8FABB7;
         }
     </style>
 {% endblock %}
@@ -155,7 +155,7 @@
             <!--設定訂單的詳細內容品項表格-->
             <tr class="order-detail" id="order-detail-{{order.order_id}}" style="display: none;" >
                 <!--合併一列的儲存格，與order-list表格做出區別，因為兩個table的column數量不一樣-->
-                <td colspan="7" style="padding-top: 5px; padding-left: 10px; padding-right: 10px; padding-bottom: 0px;">
+                <td colspan="7">
                     <!--開始填入order-detail的內容-->
                     <table class="table table-striped">
                         <thead class="table-light">
