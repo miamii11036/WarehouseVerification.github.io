@@ -7,7 +7,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
     <style>
         body{
-            height: 100vh;   
+            height: 100vh;
+            min-width: 948px;   
         }
         .btn-outline-secondary{
             --bs-btn-color: #46656F;
@@ -29,10 +30,10 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 16px;
             width: fit-content; 
         }
-        @media (max-width: 700px) { 
+        @media (max-width: 948px) { 
             .responsive-form { 
                 flex-direction: column; 
             } 
@@ -56,6 +57,14 @@
             min-width: 100px;
             text-align: left;
             word-wrap: break-word;
+        }
+        .table.table-striped {
+            --bs-table-striped-bg:#D8DFE5;
+            --bs-table-striped-color:#01070A;
+            margin: 10px 0px;
+        }
+        .table.table-hover {
+            --bs-table-hover-bg:#D8DFE5;
         }
     </style>
 {% endblock %}
@@ -104,7 +113,7 @@
             <!--地區-->
             <div class="input-group mb-3">
                 <span class="input-group-text" id="Region">Region</span>
-                <input type="text" class="form-control" name="region">
+                <input type="text" class="form-control" name="region" id="region">
             </div>
             <!--提交按鈕與重置按鈕-->
             <div class="hstack gap-3">
@@ -118,7 +127,7 @@
 
 <!--訂單列表-->
 <div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded"  style="max-width: 2100px;">
-    <table class="table table-striped">
+    <table class="table table-hover">
         <thead class="table-light">
             <th id = "column1">Order ID</th>
             <th id = "column1">Year</th>
@@ -144,8 +153,9 @@
                 </td>
             </tr>
             <!--設定訂單的詳細內容品項表格-->
-            <tr class="order-detail" id="order-detail-{{order.order_id}}" >
-                <td colspan="7"> <!--合併一列的儲存格，與order-list表格做出區別，因為兩個table的column數量不一樣-->
+            <tr class="order-detail" id="order-detail-{{order.order_id}}" style="display: none;" >
+                <!--合併一列的儲存格，與order-list表格做出區別，因為兩個table的column數量不一樣-->
+                <td colspan="7" style="padding-top: 5px; padding-left: 10px; padding-right: 10px; padding-bottom: 0px;">
                     <!--開始填入order-detail的內容-->
                     <table class="table table-striped">
                         <thead class="table-light">
@@ -169,43 +179,24 @@
 
 
 <script>
-// document.addEventListener("DOMContentLoaded", function () {
-//     // 選取所有的 Expand/Hide 按鈕
-//     const expandButtons = document.querySelectorAll(".expand-btn");
+$(document).ready(function(){
+    /*網頁初始載入時隱藏 order-detail*/
+    $(`.order-detail`).hide();
 
-//     expandButtons.forEach(button => {
-//         button.addEventListener("click", function () {
-//             // 找到按鈕所在的父層 <tr>
-//             const orderRow = this.closest("tr");
-//             // 取得對應的詳細內容行 (order-detail)
-//             const orderId = orderRow.dataset.orderId;
-//             const detailRow = document.querySelector(`#order-detail-${orderId}`);
-
-//             if (detailRow) {
-//                 // 切換 display 屬性
-//                 if (detailRow.style.display === "none" || detailRow.style.display === "") {
-//                     detailRow.style.display = "table-row"; // 顯示
-//                 } else {
-//                     detailRow.style.display = "none"; // 隱藏
-//                 }
-//             }
-//         });
-//     });
-// });
-    
-$(document).ready(function () {
-    $(`.expand-btn`).on("click", function () {
-        const row = $(this).closest("tr");
-        const orderid = row.data("order-id");
-        const orderdetail = $(`#order-detail-${orderid}`);
+    /*當按下.expand-btn按鈕時*/
+    $(`.expand-btn`).on("click", function() {
+        const row = $(this).closest("tr"); /*找到最接近這按鈕的tr tag，也就是order-list的tr */
+        const orderid = row.data("order-id"); /*取得該tr tag中 data-order-id="{{order.order_id}}" 的order-id */
+        const orderdetail = $(`#order-detail-${orderid}`); /*找到要顯示order-detail的html tag */
 
         if (orderdetail.is(":visible")) {
-            // 使用者再次點擊按鈕時收起 orderdetail 表格
+            /*如果order-detail已經展開則隱藏，讓使用者可以隱藏展開的子table*/
             orderdetail.hide();
         } else {
-            // 如果子表格尚未載入資料，透過 AJAX 請求獲取數據
+            /*如果子table已經隱藏，則確認這個子table是否已經加載過資料*/
             if (orderdetail.find(".order-detail-data").children().length === 0) {
-                $.get(`/order_detail/${orderid}/`, function (data) {
+                /*如果沒有加載過資料，則接收來自views.py的order_detail函數丟過來的資料並顯示子table*/
+                $.get(`/order_detail/${orderid}/`, function(data) {
                     const products = data.orderdetail;
                     const tbody = orderdetail.find(".order-detail-data");
 
@@ -218,7 +209,7 @@ $(document).ready(function () {
                                 <td>${product.product_type}</td>
                                 <td>${product.quantity}</td>
                                 <td>${product.package}</td>
-                            </tr>
+                            </tr>    
                         `);
                     });
                 });
@@ -228,5 +219,4 @@ $(document).ready(function () {
     });
 });
 </script>
-
 {% endblock %}
