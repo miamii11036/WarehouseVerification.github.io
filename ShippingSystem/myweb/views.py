@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
 from django.db import IntegrityError
-from myweb.form import UserInfoForm, ModifyUserInfo, DeleteUser
-from myweb.models import UserInfo, OrderList, OrderDetail
+from django.core.paginator import Paginator, EmptyPage
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password, check_password
+from myweb.form import UserInfoForm, ModifyUserInfo, DeleteUser
+from myweb.models import UserInfo, OrderList, OrderDetail
+
 
 
 # Create your views here.
@@ -165,12 +167,32 @@ def logout(request):
     request.session.flush()
     return render(request, "index.html")
 
-def search(request):
+def orderlist(request):
     """
     把資料庫中名為OderList的table資料丟過去網頁中
     """
-    orders = OrderList.objects.all()
-    return render(request, "execute/search.html", {"orders":orders})
+    orders = OrderList.objects.all().order_by("-order_id")
+    paginator = Paginator(orders, 10)
+    page_number = request.GET.get('page', 1)
+    try:
+        page_obj = paginator.get_page(page_number)
+    except EmptyPage:
+        return JsonResponse({"orders": [], "has_next": False, "total_pages": paginator.num_pages})
+    print("Page Object Data:", list(page_obj))
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        data = [
+            {
+                "order_id":order.order_id,
+                "year":order.year,
+                "month":order.month,
+                "region":order.region,
+                "client":order.client,
+                "status":order.status
+            }
+            for order in page_obj
+        ]
+        return JsonResponse({"orders":data, "has_next":page_obj.has_next(), "total_pages": paginator.num_pages})
+    return render(request, "execute/search.html", {"page_obj": page_obj})
 
 def order_detail(request, order_id):
     """

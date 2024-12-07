@@ -33,7 +33,7 @@
             font-size: 16px;
             width: fit-content; 
         }
-        @media (max-width: 948px) { 
+        @media (max-width: 991px) { 
             .responsive-form { 
                 flex-direction: column; 
             } 
@@ -86,27 +86,28 @@
 {% block content %}
 <!--查詢orderID輸入框-->
 <div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded" id="OrderIDSearch">
-    <form action="" method="post" class="hstack gap-3"> 
+    <form action="" method="get" class="hstack gap-3">
+        {% csrf_token %} 
         <div class="input-group mb-3" style="margin-bottom: 0px !important;">
-            <div class="input-group-text" id="OrderID">Order ID</div>
+            <label for="order_id" class="input-group-text" id="OrderID">Order ID</label>
             <input type="text" class="form-control" id="order_id" name="order_id" aria-label="OrderID" >
         </div>
         <!--查詢按鈕-->
-        <button class="btn btn-outline-secondary" type="button" id="OrderIDSearchButton">Search</button> 
+        <button class="btn btn-outline-secondary" type="submit" id="SearchButton">Search</button> 
     </form>
 </div>
 <!--篩選範圍設定框-->
 <div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded"  style="max-width: 1450px;">
-    <form>
+    <form method="get" action="">
         <div class="hstack gap-3">
             <!--年份-->
             <div class="input-group mb-3">
-                <span class="input-group-text" id="Year">Year</span>
+                <label for="year" class="input-group-text">Year</label>
                 <input type="text" class="form-control" id="year" name="year">
             </div>
             <!--月份-->
             <div class="input-group mb-3">
-                <span class="input-group-text"  id="Month">Month</span>
+                <label for="month" class="input-group-text">Month</label>
                 <select class="form-select" name="month">
                     <option selected value="1">January(1)</option>
                     <option value="2">February(2)</option>
@@ -124,14 +125,14 @@
             </div>
             <!--地區-->
             <div class="input-group mb-3">
-                <span class="input-group-text" id="Region">Region</span>
+                <label for="region" class="input-group-text">Region</label>
                 <input type="text" class="form-control" name="region" id="region">
             </div>
             <!--提交按鈕與重置按鈕-->
             <div class="hstack gap-3">
-                <button class="btn btn-outline-secondary" type="button" id="FilterSearch">Search</button> 
+                <button class="btn btn-outline-secondary" type="submit" id="SearchButton">Search</button> 
                 <div class="vr"></div>
-                <button  type="button" class="btn btn-outline-secondary">Reset</button>
+                <button  type="reset" class="btn btn-outline-secondary">Reset</button>
             </div>
         </div>
     </form>
@@ -139,7 +140,7 @@
 
 <!--訂單列表-->
 <div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded"  style="max-width: 2100px;">
-    <table class="table table-hover">
+    <table class="table table-hover" id="order-list-table">
         <thead class="table-light">
             <th id = "column1">Order ID</th>
             <th id = "column1">Year</th>
@@ -150,7 +151,7 @@
             <th id = "column1"></th>
         </thead>
         <tbody> 
-            {% for order in orders %}
+            {% for order in page_obj %}
             <!--填入每一張訂單-->
             <tr class="order-list" data-order-id="{{order.order_id}}">
                                 <!--data-order-id為自定義屬性，使用data-*屬性可以在script區域中使用data()來取得該屬性的值-->
@@ -187,52 +188,32 @@
         </tbody>
     </table>
 </div>
+
+<!--分頁按鈕-->
+<nav>
+    <ul class="pagination justify-content-center" id="pagination">
+        <!-- Previous 按鈕 -->
+        <li class="page-item disabled" id="prev-page">
+            <a class="page-link" href="#" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        <!-- 動態頁碼將由 JavaScript 插入 -->   
+        <!-- Next 按鈕 -->
+        <li class="page-item" id="next-page">
+            <a class="page-link" href="#" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<!--返回頂部按鈕-->
 <div class="card">
     <div class="card-body">
     <a href="#navbar"><img src="{% static 'image/UpSquared.png' %}"></a>
     </div>
 </div>
+<script src="{% static 'js/search1.js' %}"></script>
 
-
-<script>
-$(document).ready(function(){
-    /*網頁初始載入時隱藏 order-detail*/
-    $(`.order-detail`).hide();
-
-    /*當按下.expand-btn按鈕時*/
-    $(`.expand-btn`).on("click", function() {
-        const row = $(this).closest("tr"); /*找到最接近這按鈕的tr tag，也就是order-list的tr */
-        const orderid = row.data("order-id"); /*取得該tr tag中 data-order-id="{{order.order_id}}" 的order-id */
-        const orderdetail = $(`#order-detail-${orderid}`); /*找到要顯示order-detail的html tag */
-
-        if (orderdetail.is(":visible")) {
-            /*如果order-detail已經展開則隱藏，讓使用者可以隱藏展開的子table*/
-            orderdetail.hide();
-        } else {
-            /*如果子table已經隱藏，則確認這個子table是否已經加載過資料*/
-            if (orderdetail.find(".order-detail-data").children().length === 0) {
-                /*如果沒有加載過資料，則接收來自views.py的order_detail函數丟過來的資料並顯示子table*/
-                $.get(`/order_detail/${orderid}/`, function(data) {
-                    const products = data.orderdetail;
-                    const tbody = orderdetail.find(".order-detail-data");
-
-                    tbody.empty();
-                    products.forEach(product => {
-                        tbody.append(`
-                            <tr>
-                                <td>${product.product_id}</td>
-                                <td>${product.product_name}</td>
-                                <td>${product.product_type}</td>
-                                <td>${product.quantity}</td>
-                                <td>${product.package}</td>
-                            </tr>    
-                        `);
-                    });
-                });
-            }
-            orderdetail.show();
-        }
-    });
-});
-</script>
 {% endblock %}
