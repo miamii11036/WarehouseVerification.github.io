@@ -66,6 +66,18 @@
         .table.table-hover {
             --bs-table-hover-bg:#8FABB7;
         }
+        .card {
+            max-width:fit-content;
+            --bs-card-height: fit-content;
+            --bs-border-width:0px;
+            position: fixed; 
+            background-color: #FBFBFB;
+            bottom: 5px;
+            right: 5px; 
+        }
+        .card-body {
+            padding: 0px;
+        }
     </style>
 {% endblock %}
 <!-------body-----想法:使用者輸入orderId後，系統會自動在表格中搜尋對應的ID，找到後該列會反藍並展開order的詳細內容---------
@@ -175,7 +187,11 @@
         </tbody>
     </table>
 </div>
-
+<div class="card">
+    <div class="card-body">
+    <a href="#navbar"><img src="{% static 'image/UpSquared.png' %}"></a>
+    </div>
+</div>
 
 
 <script>
