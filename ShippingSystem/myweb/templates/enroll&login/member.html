@@ -3,63 +3,7 @@
 
 
 {% block head %}
-<style>
-/* 通用樣式 */
-    body {
-        font-family: Arial, sans-serif; /* 簡單設定字體 */
-        background-color: #FBFBFB; /* 背景顏色 */
-        margin: 0;
-        padding: 0;
-    }
-
-    /* 標題樣式 */
-    #title {
-        color: #01070A;
-        font-family: Arial, sans-serif;
-    }
-
-    /* 功能列表樣式 */
-    #functionlist {
-        min-width: 200px; /* 設定側邊欄最小寬度 */
-        min-height: 600px;
-    }
-
-    #functionlist .list-group-item {
-        border-radius: 5px; /* 邊角圓滑 */
-        margin-bottom: 10px; /* 元素間距 */
-        text-align: center;
-        border: 1px solid #8FABB7;
-    }
-
-    /* Active 狀態的樣式 */
-    #functionlist .list-group-item.active {
-        background-color: #46656F;
-        color: #FBFBFB;
-    }
-
-    /* 內容區樣式 */
-    #functiondata {
-        min-height: 600px; /* 設定內容區最小高度 */
-    }
-
-    /* 響應式設計 */
-    @media (max-width: 768px) {
-        .d-flex {
-            flex-direction: column; /* 小螢幕改為垂直排列 */
-        }
-
-        #functionlist {
-            margin-bottom: 20px; /* 增加間距 */
-        }
-    }
-    .d-flex{
-        justify-content: center;
-        align-items: center;
-    }
-    .container {
-        margin-top: 150px;
-    }
-</style>
+<link href="{% static 'css/member.css' %}" rel="stylesheet" type="text/css">
 {% endblock %}
 
 

@@ -1,0 +1,55 @@
+body {
+    margin: 0;
+    height: 100vh; /* 確保高度覆蓋整個視窗 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* 水平置中 */
+    align-items: center; /* 垂直置中 */
+    background-color: #8FABB7; /* 可選，設置背景色 */
+    
+}
+fieldset{
+    margin-bottom: 255px;
+    margin-top: 150px;
+    padding: 40px 70px 40px 70px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #FBFBFB;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 增加陰影 */
+    text-align: center; /* 將表單內容置中 */
+    min-width: 557px;
+}
+
+.submit{
+    margin-top: 10px; /* 按鈕與輸入框的間距 */
+    padding: 10px 20px;
+    background-color: #46656F; /* 按鈕背景色 */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 20px;
+}
+.checkbox-error-container {
+    display: flex;
+    align-items: center; 
+    justify-content: space-between; 
+    margin-top: 5px;
+    margin-bottom: 0px;
+}
+.checkbox-container {
+    display: flex;
+    align-items: center;
+}
+.checkbox-container input[type="checkbox"] {
+    margin-right: 5px; 
+}
+#error-message {
+    color: red;
+    font-size: 0.9em;
+    margin-left: 10px; /* 與 checkbox 的分隔距離 */
+}
+.title {
+    font-size: 70px;
+    margin: 0;
+}
