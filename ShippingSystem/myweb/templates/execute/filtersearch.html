@@ -199,7 +199,7 @@ $(document).ready(function() { //當網頁載入完成時
             updatePagination(page, totalPages, hasNext);
 
             //當點擊上方的order-list-table中的Expand/Hide按鈕時
-            $("#order-list-table").on("click", ".expand-btn", function(){
+            $(".expand-btn").on("click", function(){
                 const row = $(this).closest("tr"); //找到離Expand/Hide按鈕最近的tr tag，即是class="order-list"的tr
                 const orderid = row.data("order-id"); //獲取該tr的自訂屬性值 data-order-id
                 const orderdetail = $(`#order-detail-${orderid}`); //將指定的order_id的order-detail-table儲存成變量
@@ -208,7 +208,8 @@ $(document).ready(function() { //當網頁載入完成時
                     orderdetail.hide(); //假如order-detail-table已經展開則隱藏，讓使用者可以重複展開與隱藏order-detail-table
                 } else { //若order-detail-table是隱藏狀態，則檢查是否曾載入過資料庫中orderdetail table的資料
                     if (orderdetail.find(".order-detail-data").children().length === 0) { //如果沒有載入過
-                        $.get(`/order_detail/${orderid}/`, function(data) { //接收views.py中order_detail函數丟過來的JsonResponse資料
+                        $.get(`/order_detail/${orderid}/`)
+                            .done(function(data) { //接收views.py中order_detail函數丟過來的JsonResponse資料
                             const products = data.orderdetail;
                             const tbody = orderdetail.find(".order-detail-data");
 
@@ -224,6 +225,10 @@ $(document).ready(function() { //當網頁載入完成時
                                     </tr>
                                 `);
                             });
+                        })
+                        .fail(function(error) {
+                            console.error("Error:", error);
+                            window.alert("Failed to load order_detail data");
                         });
                     }
                     orderdetail.show(); //顯示order-detail-table
