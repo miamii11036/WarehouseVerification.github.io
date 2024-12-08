@@ -227,31 +227,36 @@ def IDsearch(request):
                 order_id = request.GET.get("order_id")
                 order_content = OrderList.objects.filter(order_id=order_id).first()
                 products = OrderDetail.objects.filter(order_id=order_id)
-                if order_content and products:
-                    order = {
-                        "order_id":order_content.order_id,
-                        "year":order_content.year,
-                        "month":order_content.month,
-                        "region":order_content.region,
-                        "client":order_content.client,
-                        "status":order_content.status
-                    }
-                    orderdetail = [
-                        {
-                            "product_id":product.product_id.product_id,
-                            "product_name":product.product_id.product_name,
-                            "product_type":product.product_id.product_type,
-                            "quantity":float(product.quantity),
-                            "package":product.package
+                if order_content:
+                    if products:
+                        order = {
+                            "order_id":order_content.order_id,
+                            "year":order_content.year,
+                            "month":order_content.month,
+                            "region":order_content.region,
+                            "client":order_content.client,
+                            "status":order_content.status
                         }
-                        for product in products
-                    ]
-                    return render(request, "execute/IDsearch.html", {"order":order, "orderdetail":orderdetail})
+                        orderdetail = [
+                            {
+                                "product_id":product.product_id.product_id,
+                                "product_name":product.product_id.product_name,
+                                "product_type":product.product_id.product_type,
+                                "quantity":float(product.quantity),
+                                "package":product.package
+                            }
+                            for product in products
+                        ]
+                        return render(request, "execute/IDsearch.html", {"order":order, "orderdetail":orderdetail})
+                    else:
+                        messages.add_message(request, messages.ERROR, "Order_Detail is not exist")
+                        return redirect("/orderlist")
                 else:
                     messages.add_message(request, messages.ERROR, "Order_id is not exist")
-                    return redirect("orderlist")
+                    return redirect("/orderlist")
         except Exception as e:
             print("有東西怪怪的")
             pass
     else:
         return redirect("/")
+    

@@ -164,6 +164,16 @@
     </div>
     {% endfor %}
 {% endif %}
+{% if messages %}
+<script>
+    const modal = new bootstrap.Modal(document.getElementById("warningModal"));
+    modal.show();
+    document.getElementById("warningModal").addEventListener("shown.bs.modal", function () {
+    document.getElementById("warningModal").setAttribute("data-bs-backdrop", "static");
+    document.getElementById("warningModal").setAttribute("data-bs-keyboard", "false");
+    });
+</script>
+{% endif %}
 
 <script src="{% static 'js/search1.js' %}"></script>
 
