@@ -29,7 +29,8 @@
 </div>
 <!--篩選範圍設定框-->
 <div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded"  style="max-width: 1450px;">
-    <form method="get" action="">
+    <form method="get" action="{% url 'Filtersearch' %}">
+        {% csrf_token %} 
         <div class="hstack gap-3">
             <!--年份-->
             <div class="input-group mb-3">
@@ -39,8 +40,9 @@
             <!--月份-->
             <div class="input-group mb-3">
                 <label for="month" class="input-group-text">Month</label>
-                <select class="form-select" name="month">
-                    <option selected value="1">January(1)</option>
+                <select class="form-select" name="month" >
+                    <option selected></option>
+                    <option value="1">January(1)</option>
                     <option value="2">February(2)</option>
                     <option value="3">March(3)</option>
                     <option value="4">April(4)</option>

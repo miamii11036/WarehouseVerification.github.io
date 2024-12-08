@@ -27,10 +27,3 @@ class DeleteUser(forms.ModelForm):
         model = UserInfo 
         fields = ['account', 'email', 'password']
 
-class IdSearch(forms.ModelForm):
-    """
-    取得使用者在search畫面輸入的ID
-    """
-    class Meta:
-        model = OrderList
-        fields = ["order_id"]

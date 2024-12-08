@@ -249,7 +249,7 @@ def IDsearch(request):
                         ]
                         return render(request, "execute/IDsearch.html", {"order":order, "orderdetail":orderdetail})
                     else:
-                        messages.add_message(request, messages.ERROR, "Order_Detail is not exist")
+                        messages.add_message(request, messages.ERROR, "There is nothing in this Order_id")
                         return redirect("/orderlist")
                 else:
                     messages.add_message(request, messages.ERROR, "Order_id is not exist")
@@ -260,3 +260,60 @@ def IDsearch(request):
     else:
         return redirect("/")
     
+def FilterSearch(request):
+    """
+    使用者輸入篩選條件時，系統從資料庫搜尋符合篩選條件的 orders 到網頁中
+    """
+    status = request.session.get("is_login")
+    if not status:
+        return redirect("/")
+
+    if request.method == "GET":
+        # 接收篩選條件
+        year = request.GET.get("year")
+        month = request.GET.get("month")
+        region = request.GET.get("region")
+
+        # 基於條件篩選
+        orders = OrderList.objects.all().order_by("-order_id")
+        if year:
+            orders = orders.filter(year=year)
+        if month:
+            orders = orders.filter(month=month)
+        if region:
+            orders = orders.filter(region=region)
+
+        # 確保篩選結果正確
+        print("篩選後的結果:", list(orders))
+
+        # 初始化 Paginator
+        paginator = Paginator(orders, 10)  # 每頁顯示 10 筆資料
+        page_number = request.GET.get("page", 1)
+        try:
+            page_obj = paginator.get_page(page_number)
+        except EmptyPage:
+            return JsonResponse({"orders": [], "has_next": False, "total_pages": paginator.num_pages})
+
+        # 如果是 AJAX 請求，返回 JSON
+        if request.headers.get("x-requested-with") == "XMLHttpRequest":
+            data = [
+                {
+                    "order_id": order.order_id,
+                    "year": order.year,
+                    "month": order.month,
+                    "region": order.region,
+                    "client": order.client,
+                    "status": order.status,
+                }
+                for order in page_obj
+            ]
+            return JsonResponse(
+                {"orders": data, "has_next": page_obj.has_next(), "total_pages": paginator.num_pages}
+            )
+
+        # 非 AJAX 請求，返回渲染頁面
+        return render(
+            request,
+            "execute/filtersearch.html",
+            {"page_obj": page_obj, "year": year, "month": month, "region": region},
+        )
