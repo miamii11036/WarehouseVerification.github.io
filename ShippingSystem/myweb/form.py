@@ -1,5 +1,5 @@
 from django import forms
-from myweb.models import UserInfo
+from myweb.models import UserInfo, OrderList
 
 class UserInfoForm(forms.ModelForm):
     """
@@ -26,3 +26,11 @@ class DeleteUser(forms.ModelForm):
     class Meta: 
         model = UserInfo 
         fields = ['account', 'email', 'password']
+
+class IdSearch(forms.ModelForm):
+    """
+    取得使用者在search畫面輸入的ID
+    """
+    class Meta:
+        model = OrderList
+        fields = ["order_id"]

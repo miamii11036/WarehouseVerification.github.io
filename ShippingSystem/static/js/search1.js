@@ -81,7 +81,7 @@ $(document).ready(function() { //當網頁載入完成時
         })
         .fail(function(error) { //如果沒有成功接收views.py的orderlist函數丟過來的JsonResponse
             console.error("Error:", error);
-            alert("Failed to load data");
+            window.alert("Failed to load data");
         });
     }
 

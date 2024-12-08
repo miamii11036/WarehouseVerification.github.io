@@ -171,28 +171,29 @@ def orderlist(request):
     """
     把資料庫中名為OderList的table資料丟過去網頁中
     """
-    orders = OrderList.objects.all().order_by("-order_id")
-    paginator = Paginator(orders, 10)
-    page_number = request.GET.get('page', 1)
-    try:
-        page_obj = paginator.get_page(page_number)
-    except EmptyPage:
-        return JsonResponse({"orders": [], "has_next": False, "total_pages": paginator.num_pages})
-    print("Page Object Data:", list(page_obj))
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        data = [
-            {
-                "order_id":order.order_id,
-                "year":order.year,
-                "month":order.month,
-                "region":order.region,
-                "client":order.client,
-                "status":order.status
-            }
-            for order in page_obj
-        ]
-        return JsonResponse({"orders":data, "has_next":page_obj.has_next(), "total_pages": paginator.num_pages})
-    return render(request, "execute/search.html", {"page_obj": page_obj})
+    status = request.session.get("is_login")
+    if status:
+        orders = OrderList.objects.all().order_by("-order_id")
+        paginator = Paginator(orders, 10)
+        page_number = request.GET.get('page', 1)
+        try:
+            page_obj = paginator.get_page(page_number)
+        except EmptyPage:
+            return JsonResponse({"orders": [], "has_next": False, "total_pages": paginator.num_pages})
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            data = [
+                {
+                    "order_id":order.order_id,
+                    "year":order.year,
+                    "month":order.month,
+                    "region":order.region,
+                    "client":order.client,
+                    "status":order.status
+                }
+                for order in page_obj
+            ]
+            return JsonResponse({"orders":data, "has_next":page_obj.has_next(), "total_pages": paginator.num_pages})
+        return render(request, "execute/search.html", {"page_obj": page_obj})
 
 def order_detail(request, order_id):
     """
@@ -214,3 +215,43 @@ def order_detail(request, order_id):
         return JsonResponse({"orderdetail":orderdetail})
     except Exception as e:
         return JsonResponse({'error': 'Internal Server Error'}, status=500)
+
+def IDsearch(request):
+    """
+    依照使用者輸入的order id 對資料庫進行檢索並傳送結果到表格中
+    """
+    status = request.session.get("is_login")
+    if status:
+        try:
+            if request.method == "GET":
+                order_id = request.GET.get("order_id")
+                order_content = OrderList.objects.filter(order_id=order_id).first()
+                products = OrderDetail.objects.filter(order_id=order_id)
+                if order_content and products:
+                    order = {
+                        "order_id":order_content.order_id,
+                        "year":order_content.year,
+                        "month":order_content.month,
+                        "region":order_content.region,
+                        "client":order_content.client,
+                        "status":order_content.status
+                    }
+                    orderdetail = [
+                        {
+                            "product_id":product.product_id.product_id,
+                            "product_name":product.product_id.product_name,
+                            "product_type":product.product_id.product_type,
+                            "quantity":float(product.quantity),
+                            "package":product.package
+                        }
+                        for product in products
+                    ]
+                    return render(request, "execute/IDsearch.html", {"order":order, "orderdetail":orderdetail})
+                else:
+                    messages.add_message(request, messages.ERROR, "Order_id is not exist")
+                    return redirect("orderlist")
+        except Exception as e:
+            print("有東西怪怪的")
+            pass
+    else:
+        return redirect("/")

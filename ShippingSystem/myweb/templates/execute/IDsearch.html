@@ -17,13 +17,13 @@
         {% csrf_token %} 
         <div class="input-group mb-3" style="margin-bottom: 0px !important;">
             <label for="order_id" class="input-group-text" id="OrderID">Order ID</label>
-            <input type="text" class="form-control" id="order_id" name="order_id" required>
+            <input type="text" class="form-control" id="order_id" name="order_id" value="{{order.order_id}}" required>
         </div>
         <!--查詢按鈕-->
         <div class="hstack gap-3">
             <button class="btn btn-outline-secondary" type="submit" id="SearchButton">Search</button> 
             <div class="vr"></div>
-            <button  type="reset" class="btn btn-outline-secondary">Reset</button>
+            <a href="{% url 'orderlist' %}" class="btn btn-outline-secondary" >Reset</a>
         </div>
     </form>
 </div>
@@ -82,8 +82,7 @@
             <th id = "column1"></th>
         </thead>
         <tbody> 
-            {% for order in page_obj %}
-            <!--填入每一張訂單-->
+            <!--指定訂單-->
             <tr class="order-list" data-order-id="{{order.order_id}}">
                                 <!--data-order-id為自定義屬性，使用data-*屬性可以在script區域中使用data()來取得該屬性的值-->
                 <td>{{order.order_id}}</td>
@@ -97,10 +96,9 @@
                 </td>
             </tr>
             <!--設定訂單的詳細內容品項表格-->
-            <tr class="order-detail" id="order-detail-{{order.order_id}}" style="display: none;" >
+            <tr class="order-detail" id="order-detail-{{order.order_id}}" style="display: table-row;" >
                 <!--合併一列的儲存格，與order-list表格做出區別，因為兩個table的column數量不一樣-->
                 <td colspan="7">
-                    <!--開始填入order-detail的內容-->
                     <table class="table table-striped">
                         <thead class="table-light">
                             <th>Product ID</th>
@@ -109,35 +107,23 @@
                             <th>Quantity</th>
                             <th>Package</th>
                         </thead>
-                        <tbody class="order-detail-data"><!--Json傳遞過來的資料開始填入-->
-                            
+                        <tbody class="order-detail-data">
+                            {% for product in orderdetail %}
+                            <tr>
+                                <td>{{product.product_id}}</td>
+                                <td>{{product.product_name}}</td>
+                                <td>{{product.product_type}}</td>
+                                <td>{{product.quantity}}</td>
+                                <td>{{product.package}}</td>
+                            </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </td>
             </tr>
-            {% endfor %}
         </tbody>
     </table>
 </div>
-
-<!--分頁按鈕-->
-<nav>
-    <ul class="pagination justify-content-center" id="pagination">
-        <!-- Previous 按鈕 -->
-        <li class="page-item disabled" id="prev-page">
-            <a class="page-link" href="#" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-            </a>
-        </li>
-        <!-- 動態頁碼將由 JavaScript 插入 -->   
-        <!-- Next 按鈕 -->
-        <li class="page-item" id="next-page">
-            <a class="page-link" href="#" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-            </a>
-        </li>
-    </ul>
-</nav>
 
 <!--返回頂部按鈕-->
 <div class="card">
@@ -146,25 +132,21 @@
     </div>
 </div>
 
-<!--搜尋ID時系統找不到ID的警告-->
-{% if messages %}
-    {% for message in messages %}
-    <div id="warningModal" class="modal" tabindex="-1">
-        <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h5 class="modal-title">Warning</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-            {{message}}
-            </div>
-        </div>
-        </div>
-    </div>
-    {% endfor %}
-{% endif %}
+<!--讓使用者可以收起或展開子table-->
+<script> 
+$(document).ready(function (){
+    $(".expand-btn").on("click", function() {
+        const row = $(this).closest("tr");
+        const orderid = row.data("order-id");
+        const orderdetail = $(`#order-detail-${orderid}`);
 
-<script src="{% static 'js/search1.js' %}"></script>
+        if (orderdetail.is(":visible")) {
+            orderdetail.hide();
+        } else {
+            orderdetail.show();
+        }
+    });
+});
+</script> 
 
 {% endblock %}
