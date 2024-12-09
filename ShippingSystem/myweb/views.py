@@ -172,15 +172,19 @@ def orderlist(request):
     把資料庫中名為OderList的table資料丟過去網頁中
     """
     status = request.session.get("is_login")
-    if status:
+    if not status:
+        return redirect("/")
+    else:
         orders = OrderList.objects.all().order_by("-order_id")
-        paginator = Paginator(orders, 10)
-        page_number = request.GET.get('page', 1)
-        try:
-            page_obj = paginator.get_page(page_number)
-        except EmptyPage:
+        paginator = Paginator(orders, 10) #將orderlist table的資料以每10條資料為一頁整合，並儲存在名為Paginator的物件
+        page_number = request.GET.get('page', 1)  #從request的get參數獲取代表當前頁碼的page參數，如果沒有頁碼參數，則默認為第 1 頁。
+                                      #page的參數是從js的這裡$.get(`/orderlist/?page=${page}`)丟過來的
+        try:  #從 Paginator 物件中獲取指定頁碼的資料，如果頁碼無效或超出範圍，將捕捉例外並返回空的 JSON 回應
+            page_obj = paginator.get_page(page_number)  #獲取指定頁碼的資料，返回一個 Page 物件
+        except EmptyPage: #當頁碼超出範圍時拋出的異常
             return JsonResponse({"orders": [], "has_next": False, "total_pages": paginator.num_pages})
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest': #檢查請求是否為AJAX請求
             data = [
                 {
                     "order_id":order.order_id,
@@ -276,30 +280,24 @@ def FilterSearch(request):
             month = request.GET.get("month")
             region = request.GET.get("region")
 
-            # if year and year.isdigit():
-            #     year = int(year)
-            #     print("year的資料類型", type(year))
-            #     print("年:", year)
-            # # else:
-            # #     year = None
-            # #     messages.add_message(request, messages.ERROR, "Year非有效數字")
-            # #     return redirect("/orderlist")
-            # if month and month.isdigit():
-            #     month = int(month)
-            #     print("month資料類型", type(month))
-            #     print("月:", month)
-            # # else:
-            # #     month = None
-            # #     # messages.add_message(request, messages.ERROR, "Month非有效數字")
-            # #     # return redirect("/orderlist")
+            if year and year.isdigit():
+                year = int(year)
+            #     messages.add_message(request, messages.ERROR, "Year非有效數字")
+            #     return redirect("/orderlist")
+            if month and month.isdigit():
+                month = int(month)
+            else:
+                month = None
+                # messages.add_message(request, messages.ERROR, "Month非有效數字")
+                # return redirect("/orderlist")
             # if region:
             #     region = str(region)
             #     print("region資料類型", type(region))
             #     print("地區:", region)
-            # # else:
-            # #     region = None
-            # #     # messages.add_message(request, messages.ERROR, "Region非有效字串")
-            # #     # return redirect("/orderlist")
+            # else:
+            #     region = None
+                # messages.add_message(request, messages.ERROR, "Region非有效字串")
+                # return redirect("/orderlist")
         except Exception as e:
             print(f"沒有成功接收到篩選資料:{e}")    
 
@@ -311,7 +309,6 @@ def FilterSearch(request):
                 orders = orders.filter(month=month)
             if region:
                 orders = orders.filter(region=region)
-            print("篩選後的結果:", orders)
         except Exception as e:
             print(f"資料庫篩選失敗:{e}")
             

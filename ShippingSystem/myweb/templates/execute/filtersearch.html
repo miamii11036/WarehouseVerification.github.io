@@ -7,8 +7,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
     <link href="{% static 'css/search.css' %}" rel="stylesheet" type="text/css">
 {% endblock %}
-<!-------body-----想法:使用者輸入orderId後，系統會自動在表格中搜尋對應的ID，找到後該列會反藍並展開order的詳細內容---------
-----------------------提供篩選條件，讓使用者篩選出特定範圍內的訂單清單------搜尋ID可以用相機掃描QRCODE-------------------------------->
+
 
 {% block content %}
 <!--查詢orderID輸入框-->
@@ -23,7 +22,7 @@
         <div class="hstack gap-3">
             <button class="btn btn-outline-secondary" type="submit" id="SearchButton">Search</button> 
             <div class="vr"></div>
-            <button  type="reset" class="btn btn-outline-secondary">Reset</button>
+            <a href="{% url 'orderlist' %}" class="btn btn-outline-secondary" >Reset</a>
         </div>
     </form>
 </div>
@@ -54,19 +53,6 @@
                     <option value="10" {% if month == 10 %}selected{% endif %}>October(10)</option> 
                     <option value="11" {% if month == 11 %}selected{% endif %}>November(11)</option> 
                     <option value="12" {% if month == 12 %}selected{% endif %}>December(12)</option> 
-                    <!-- <option value="" selected>Select a month</option> 
-                    <option value="1">January(1)</option> 
-                    <option value="2">February(2)</option> 
-                    <option value="3">March(3)</option> 
-                    <option value="4">April(4)</option> 
-                    <option value="5">May(5)</option> 
-                    <option value="6">June(6)</option> 
-                    <option value="7">July(7)</option> 
-                    <option value="8">August(8)</option> 
-                    <option value="9">September(9)</option> 
-                    <option value="10">October(10)</option> 
-                    <option value="11">November(11)</option> 
-                    <option value="12">December(12)</option> -->
                 </select>
             </div>
             <!--地區-->
@@ -78,7 +64,7 @@
             <div class="hstack gap-3">
                 <button class="btn btn-outline-secondary" type="submit" id="SearchButton">Search</button> 
                 <div class="vr"></div>
-                <a href="{% url 'orderlist' %}" class="btn btn-outline-secondary" >Reset</a>
+                <a href="{% url 'orderlist' %}" class="btn btn-outline-secondary">Reset</a>
             </div>
         </div>
     </form>
@@ -172,8 +158,7 @@ $(document).ready(function() { //當網頁載入完成時
     function loadOrders(page) {
         currentPage = page
         /* 載入頁碼對應的資料庫之orderlist table資料 */
-        $.get(`/Filtersearch/?page=${page}&year=${$('#year').val()}&month=${$('#month').val()}&region=${$('#region').val()}`) 
-        // &year=${$('#year').val()}&month=${$('#month').val()}&region=${$('#region').val()}
+        $.get(`/Filtersearch/?page=${page}&year=${$('#year').val()}&month=${$('#month').val()}&region=${$('#region').val()}`)  //這一大段一定要!要不然資料庫的所有資料都會呈現
             .done(function(response) { //成功接收資料時執行
             const orders = response.orders; 
             const hasNext = response.has_next
@@ -216,7 +201,6 @@ $(document).ready(function() { //當網頁載入完成時
 
             //當點擊上方的order-list-table中的Expand/Hide按鈕時
             $(".expand-btn").on("click", function(){
-            // $("#order-list-table").on("click", ".expand-btn", function(){
                 const row = $(this).closest("tr"); //找到離Expand/Hide按鈕最近的tr tag，即是class="order-list"的tr
                 const orderid = row.data("order-id"); //獲取該tr的自訂屬性值 data-order-id
                 const orderdetail = $(`#order-detail-${orderid}`); //將指定的order_id的order-detail-table儲存成變量
