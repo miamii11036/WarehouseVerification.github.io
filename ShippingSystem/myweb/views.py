@@ -332,3 +332,6 @@ def FilterSearch(request):
 
         # 非 AJAX 請求，返回渲染頁面
         return render(request,"execute/filtersearch.html", {"page_obj": page_obj, "year": year, "month":month, "region": region})
+
+def start_process(request):
+    return render(request, "implement/start.html")

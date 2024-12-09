@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Search{% endblock %}
+{% block title %}IDSearch{% endblock %}
 
 {% block head %}
     <!--載入jquery函數庫-->
@@ -13,7 +13,7 @@
 <div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded" id="OrderIDSearch">
     <form action="{% url 'IDsearch' %}" method="get" class="hstack gap-3">
         {% csrf_token %} 
-        <div class="input-group mb-3" style="margin-bottom: 0px !important;">
+        <div class="input-group mb-3">
             <label for="order_id" class="input-group-text" id="OrderID">Order ID</label>
             <input type="text" class="form-control" id="order_id" name="order_id" value="{{order.order_id}}" required>
         </div>
