@@ -40,19 +40,33 @@
             <!--月份-->
             <div class="input-group mb-3">
                 <label for="month" class="input-group-text">Month</label>
-                <select class="form-select" name="month">
-                    <option value="1">January(1)</option>
-                    <option  value="2">February(2)</option>
-                    <option  value="3">March(3)</option>
-                    <option  value="4">April(4)</option>
-                    <option  value="5">May(5)</option>
-                    <option  value="6">June(6)</option>
-                    <option  value="7">July(7)</option>
-                    <option  value="8">August(8)</option>
-                    <option  value="9">September(9)</option>
-                    <option  value="10">October(10)</option>
-                    <option  value="11">November(11)</option>
-                    <option  value="12">December(12)</option>
+                <select class="form-select" name="month" id="month">
+                    <option value="" {% if not month %}selected{% endif %}>Select a month</option> 
+                    <option value="1" {% if month == 1 %}selected{% endif %}>January(1)</option> 
+                    <option value="2" {% if month == 2 %}selected{% endif %}>February(2)</option> 
+                    <option value="3" {% if month == 3 %}selected{% endif %}>March(3)</option> 
+                    <option value="4" {% if month == 4 %}selected{% endif %}>April(4)</option> 
+                    <option value="5" {% if month == 5 %}selected{% endif %}>May(5)</option> 
+                    <option value="6" {% if month == 6 %}selected{% endif %}>June(6)</option> 
+                    <option value="7" {% if month == 7 %}selected{% endif %}>July(7)</option> 
+                    <option value="8" {% if month == 8 %}selected{% endif %}>August(8)</option> 
+                    <option value="9" {% if month == 9 %}selected{% endif %}>September(9)</option> 
+                    <option value="10" {% if month == 10 %}selected{% endif %}>October(10)</option> 
+                    <option value="11" {% if month == 11 %}selected{% endif %}>November(11)</option> 
+                    <option value="12" {% if month == 12 %}selected{% endif %}>December(12)</option> 
+                    <!-- <option value="" selected>Select a month</option> 
+                    <option value="1">January(1)</option> 
+                    <option value="2">February(2)</option> 
+                    <option value="3">March(3)</option> 
+                    <option value="4">April(4)</option> 
+                    <option value="5">May(5)</option> 
+                    <option value="6">June(6)</option> 
+                    <option value="7">July(7)</option> 
+                    <option value="8">August(8)</option> 
+                    <option value="9">September(9)</option> 
+                    <option value="10">October(10)</option> 
+                    <option value="11">November(11)</option> 
+                    <option value="12">December(12)</option> -->
                 </select>
             </div>
             <!--地區-->
@@ -156,8 +170,10 @@ $(document).ready(function() { //當網頁載入完成時
     $(`.order-detail`).hide(); //隱藏order-detail-table
 
     function loadOrders(page) {
+        currentPage = page
         /* 載入頁碼對應的資料庫之orderlist table資料 */
         $.get(`/Filtersearch/?page=${page}&year=${$('#year').val()}&month=${$('#month').val()}&region=${$('#region').val()}`) 
+        // &year=${$('#year').val()}&month=${$('#month').val()}&region=${$('#region').val()}
             .done(function(response) { //成功接收資料時執行
             const orders = response.orders; 
             const hasNext = response.has_next
@@ -200,6 +216,7 @@ $(document).ready(function() { //當網頁載入完成時
 
             //當點擊上方的order-list-table中的Expand/Hide按鈕時
             $(".expand-btn").on("click", function(){
+            // $("#order-list-table").on("click", ".expand-btn", function(){
                 const row = $(this).closest("tr"); //找到離Expand/Hide按鈕最近的tr tag，即是class="order-list"的tr
                 const orderid = row.data("order-id"); //獲取該tr的自訂屬性值 data-order-id
                 const orderdetail = $(`#order-detail-${orderid}`); //將指定的order_id的order-detail-table儲存成變量
@@ -237,7 +254,8 @@ $(document).ready(function() { //當網頁載入完成時
         })
         .fail(function(error) { //如果沒有成功接收views.py的orderlist函數丟過來的JsonResponse
             console.error("Error:", error);
-            window.alert("Failed to load data");
+            const errorMessage = error.status === 404 ? "Data not found" : "Failed to load order_detail data";
+            window.alert(errorMessage);
         });
     }
 

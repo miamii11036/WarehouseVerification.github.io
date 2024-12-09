@@ -270,21 +270,51 @@ def FilterSearch(request):
 
     if request.method == "GET":
         # 接收篩選條件
-        year = request.GET.get("year")
-        month = request.GET.get("month")
-        region = request.GET.get("region")
+        # year, month, region = None, None, None
+        try:
+            year = request.GET.get("year")
+            month = request.GET.get("month")
+            region = request.GET.get("region")
 
-        # 基於條件篩選
-        orders = OrderList.objects.all().order_by("-order_id")
-        if year:
-            orders = orders.filter(year=year)
-        if month:
-            orders = orders.filter(month=month)
-        if region:
-            orders = orders.filter(region=region)
+            # if year and year.isdigit():
+            #     year = int(year)
+            #     print("year的資料類型", type(year))
+            #     print("年:", year)
+            # # else:
+            # #     year = None
+            # #     messages.add_message(request, messages.ERROR, "Year非有效數字")
+            # #     return redirect("/orderlist")
+            # if month and month.isdigit():
+            #     month = int(month)
+            #     print("month資料類型", type(month))
+            #     print("月:", month)
+            # # else:
+            # #     month = None
+            # #     # messages.add_message(request, messages.ERROR, "Month非有效數字")
+            # #     # return redirect("/orderlist")
+            # if region:
+            #     region = str(region)
+            #     print("region資料類型", type(region))
+            #     print("地區:", region)
+            # # else:
+            # #     region = None
+            # #     # messages.add_message(request, messages.ERROR, "Region非有效字串")
+            # #     # return redirect("/orderlist")
+        except Exception as e:
+            print(f"沒有成功接收到篩選資料:{e}")    
 
-        # 確保篩選結果正確
-        print("篩選後的結果:", list(orders))
+        try:
+            orders = OrderList.objects.all().order_by("-order_id")
+            if year:
+                orders = orders.filter(year=year)
+            if month:
+                orders = orders.filter(month=month)
+            if region:
+                orders = orders.filter(region=region)
+            print("篩選後的結果:", orders)
+        except Exception as e:
+            print(f"資料庫篩選失敗:{e}")
+            
 
         # 初始化 Paginator
         paginator = Paginator(orders, 10)  # 每頁顯示 10 筆資料
@@ -312,8 +342,4 @@ def FilterSearch(request):
             )
 
         # 非 AJAX 請求，返回渲染頁面
-        return render(
-            request,
-            "execute/filtersearch.html",
-            {"page_obj": page_obj, "year": year, "month": month, "region": region},
-        )
+        return render(request,"execute/filtersearch.html", {"page_obj": page_obj, "year": year, "month":month, "region": region})
