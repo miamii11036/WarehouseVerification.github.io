@@ -274,7 +274,6 @@ def FilterSearch(request):
 
     if request.method == "GET":
         # 接收篩選條件
-        # year, month, region = None, None, None
         try:
             year = request.GET.get("year")
             month = request.GET.get("month")
@@ -282,22 +281,11 @@ def FilterSearch(request):
 
             if year and year.isdigit():
                 year = int(year)
-            #     messages.add_message(request, messages.ERROR, "Year非有效數字")
-            #     return redirect("/orderlist")
             if month and month.isdigit():
                 month = int(month)
             else:
                 month = None
-                # messages.add_message(request, messages.ERROR, "Month非有效數字")
-                # return redirect("/orderlist")
-            # if region:
-            #     region = str(region)
-            #     print("region資料類型", type(region))
-            #     print("地區:", region)
-            # else:
-            #     region = None
-                # messages.add_message(request, messages.ERROR, "Region非有效字串")
-                # return redirect("/orderlist")
+    
         except Exception as e:
             print(f"沒有成功接收到篩選資料:{e}")    
 
@@ -309,8 +297,12 @@ def FilterSearch(request):
                 orders = orders.filter(month=month)
             if region:
                 orders = orders.filter(region=region)
+            if not orders:
+                messages.add_message(request, messages.ERROR, "There is nothing in the conditions")
+                return redirect("/orderlist")
         except Exception as e:
             print(f"資料庫篩選失敗:{e}")
+        
             
 
         # 初始化 Paginator
