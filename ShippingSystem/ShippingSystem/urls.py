@@ -34,5 +34,5 @@ urlpatterns = [
     path("order_detail/<int:order_id>/", order_detail, name="order_detail"),
     path("IDsearch/", IDsearch, name = "IDsearch"),
     path("Filtersearch/", FilterSearch, name="Filtersearch"),
-    path("start_rocess/", start_process, name="start_process" )
+    path("start_process/", start_process, name="start_process" )
 ]

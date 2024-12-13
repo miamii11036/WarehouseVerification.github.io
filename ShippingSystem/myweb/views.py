@@ -1,11 +1,13 @@
-from django.shortcuts import render, redirect
-from django.http import JsonResponse, HttpResponse
-from django.db import IntegrityError
 from django.core.paginator import Paginator, EmptyPage
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password, check_password
+from django.db import IntegrityError
+from django.http import JsonResponse, HttpResponse
+from django.shortcuts import render, redirect
+from django.utils import timezone
 from myweb.form import UserInfoForm, ModifyUserInfo, DeleteUser
-from myweb.models import UserInfo, OrderList, OrderDetail
+from myweb.models import UserInfo, OrderList, OrderDetail, ProcessTime
+from myweb.services import ProcessDurationServer
 
 
 
@@ -334,4 +336,70 @@ def FilterSearch(request):
         return render(request,"execute/filtersearch.html", {"page_obj": page_obj, "year": year, "month":month, "region": region})
 
 def start_process(request):
-    return render(request, "implement/start.html")
+    status = request.session.get("is_login")
+    if not status: 
+        #如果沒登入，則返回登入畫面
+        return redirect("/")
+    else:
+        if request.method == "GET":
+            order_id = request.GET.get("order_id")
+            process_type = request.GET.get("ProcessType")
+            if not order_id or not process_type:
+                messages.add_message(request, messages.DEBUG, "沒有送輸入的表單資料過來")
+                return render(request, "implement/start.html")
+            else:
+                try:
+                    order_id_databasse = OrderList.objects.get(order_id=order_id)
+                except OrderList.DoesNotExist:
+                    messages.add_message(request, messages.WARNING, "The Order ID is not existence")
+                    return redirect("/start_process")
+                    
+                        
+                process_time, created = ProcessTime.objects.get_or_create(order_id=order_id_databasse)
+                current_time = timezone.now()
+                if process_type == 'A':
+                    process_time.process_A = current_time
+                elif process_type == 'B':
+                    process_time.process_B = current_time
+                elif process_type == 'C':
+                    process_time.process_C = current_time
+                process_time.save()
+
+                duration = ProcessDurationServer.get_last_duration(process_time)
+                if duration is not None:
+                    if process_type == 'B':
+                        process_time.duration_A = duration
+                    elif process_type == 'C':
+                        process_time.duration_B = duration
+                process_time.save()
+
+
+                order_id_detail = OrderDetail.objects.filter(order_id=order_id_databasse)
+                if not order_id_detail:
+                    messages.add_message(request, messages.WARNING, "The Order is empty")
+                    return render(request, "implement/start.html")
+                else:
+                    orderdetail = [
+                        {
+                            "product_id": product.product_id.product_id,
+                            "product_name": product.product_id.product_name,
+                            "product_type": product.product_id.product_type,
+                            "product_inventory": product.product_id.product_inventory,
+                            "product_position": product.product_id.product_position,
+                            "quantity": float(product.quantity),
+                            "package": product.package
+                        }
+                        for product in order_id_detail
+                    ]
+                    if process_type == 'A':
+                        return render(request, "implement/process_A.html",
+                                    {"order_id": order_id_databasse, "orderdetail": orderdetail})
+                    if process_type == 'B':
+                        return render(request, "implement/process_B.html",
+                                    {"order_id": order_id_databasse, "orderdetail": orderdetail})
+                    if process_type == 'C':
+                        return render(request, "implement/process_C.html",
+                                    {"order_id": order_id_databasse, "orderdetail": orderdetail})
+        else:
+            print("RRRRRR")
+        return render(request, "implement/start.html")

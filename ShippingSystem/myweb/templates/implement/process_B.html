@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Process B{% endblock %}
+
+{% block head %}
+<style>
+    .border.border-2.shadow.p-3.mb-5.bg-body-tertiary.rounded {
+        flex: 1; 
+        margin-top: 50px; 
+        min-width: 700px; 
+        margin: auto;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!--Product_id輸入框-->
+<div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded" id="OrderIDSearch">
+    <form action="" method="get" class="hstack gap-3">
+        {% csrf_token %} 
+        <div class="input-group mb-3" style="margin-bottom: 0px !important;">
+            <label for="product_id" class="input-group-text" id="OrderID">Order ID</label>
+            <input type="text" class="form-control" id="product_id" name="product_id" required>
+        </div>
+    </form>
+</div>
+HI!B
+{% endblock %}

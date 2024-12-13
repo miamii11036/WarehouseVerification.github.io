@@ -57,3 +57,17 @@ class OrderDetail(models.Model):
 
     def __str__(self):
         return f"product_id:{self.product_id.product_id}, product_name:{self.product_id.product_name}, product_type:{self.product_id.product_type} quantity:{self.quantity}, package:{self.package}, order_id:{self.order_id.order_id}"
+
+class ProcessTime(models.Model):
+    """
+    紀錄每張order_id的的每個處理開始的時間點與持續時間，與最後該訂單完成所有處理的時間點
+    """
+    order_id = models.ForeignKey(OrderList, on_delete=models.CASCADE, related_name="order_process_time")
+    process_A = models.DateTimeField(null=True, blank=True)
+    process_B = models.DateTimeField(null=True, blank=True)
+    process_C = models.DateTimeField(null=True, blank=True)
+    complete = models.DateTimeField(null=True, blank=True)
+
+    duration_A = models.FloatField(null=True, blank=True)
+    duration_B = models.FloatField(null=True, blank=True)
+    duration_C = models.FloatField(null=True, blank=True)
