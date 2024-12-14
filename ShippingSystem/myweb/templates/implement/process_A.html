@@ -4,25 +4,202 @@
 
 {% block head %}
 <style>
+    body{
+        height: 100vh;
+        min-width: 1725px;   
+    }
     .border.border-2.shadow.p-3.mb-5.bg-body-tertiary.rounded {
         flex: 1; 
         margin-top: 50px; 
         min-width: 700px; 
         margin: auto;
+        max-width: 1500px;
+    }
+    #OrderIDSearch {
+        margin-top: 70px;
+    }
+    #order-detail-container {
+        max-inline-size: 10px;
+        min-width: 425px !important;
+    }
+
+    #product_container {
+        max-inline-size: 10px;
+        min-width: 425px !important;
+    }
+    .btn-outline-secondary{
+        --bs-btn-color: #46656F;
+        --bs-btn-border-color: #46656F;
+        --bs-btn-hover-color: #FBFBFB;
+        --bs-btn-hover-bg: #46656F;
+        --bs-btn-hover-border-color:--bs-btn-hover-border-color: #46656F;
+        --bs-btn-active-color: #FBFBFB;
+        --bs-btn-active-bg: #46656F;
+        --bs-btn-active-border-color: #46656F;
+        --bs-btn-disabled-color: #46656F;
+        --bs-btn-disabled-border-color: #46656F;
+    }
+    @media (max-width: 1725px) { 
+        .responsive-form { 
+            flex-direction: column; 
+        } 
     }
 </style>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 {% endblock %}
 
 {% block content %}
 <!--Product_id輸入框-->
 <div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded" id="OrderIDSearch">
-    <form action="" method="get" class="hstack gap-3">
+    <form action="{% url 'process_A' order_id %}" method="get" class="hstack gap-3">
         {% csrf_token %} 
         <div class="input-group mb-3" style="margin-bottom: 0px !important;">
-            <label for="product_id" class="input-group-text" id="OrderID">Order ID</label>
+            <label for="product_id" class="input-group-text" id="ProductID">Product ID</label>
             <input type="text" class="form-control" id="product_id" name="product_id" required>
+        </div>
+        <div class="hstack gap-3">
+            <button class="btn btn-outline-secondary" type="submit" id="CheckButton">Check</button> 
+            <div class="vr"></div>
+            <button  type="reset" class="btn btn-outline-secondary">Reset</button>
         </div>
     </form>
 </div>
-HI!A
+
+<!--Process A工作項目-->
+<div class="hstack gap-3">
+    <!--訂單的所有內容品項-->
+    <duv class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded" id="order-detail-container">
+        <table class="table">
+            <thead class="table-light">
+              <tr>
+                <th scope="col"></th>
+                <th scope="col">Product ID</th>
+                <th scope="col">Product name</th>
+              </tr>
+            </thead>
+            <tbody class="order-detail-data">
+            {% for product in orderdetail %}
+              <tr>
+                <td><input type="checkbox" readonly></td>
+                <td>{{product.product_id}}</td>
+                <td>{{product.product_name}}</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </duv>
+    <!--訂單中對該product的內容-->
+    <div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded" id="order-product-container">
+        <table class="table"> 
+            <thead class="table-light">
+                <tr>
+                    <th>Product ID</th>
+                    <th>Product Name</th>
+                    <th>Product Type</th>
+                    <th>Quantity</th>
+                    <th>Package</th>
+                </tr>
+            </thead>
+            <tbody id="Product_ID_detail">
+                <!--使用者輸入的product_id在該order_id的內容資料-->
+            </tbody>
+        </table>
+    </div>
+    <!--該product的庫存與位置-->
+    <div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded" id="product_container">
+        <table class="table">
+            <thead class="table-light">
+                <tr>
+                    <th>Inventory</th>
+                    <th>Position</th>
+                </tr>
+            </thead>
+            <tbody id="Product_content">
+                
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<!--錯誤警告-->
+{% if messages %}
+    {% for message in messages %}
+    <div id="warningModal" class="modal" tabindex="-1">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title">Warning</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            {{message}}
+            </div>
+        </div>
+        </div>
+    </div>
+    {% endfor %}
+{% endif %}
+{% if messages %}
+<script>
+    const modal = new bootstrap.Modal(document.getElementById("warningModal"));
+    modal.show();
+    document.getElementById("warningModal").addEventListener("shown.bs.modal", function () {
+    document.getElementById("warningModal").setAttribute("data-bs-backdrop", "static");
+    document.getElementById("warningModal").setAttribute("data-bs-keyboard", "false");
+    });
+</script>
+{% endif %}
+
+<script>
+$(document).ready(function() {
+    $(`#CheckButton`).click(function(e) {
+        e.preventDefault();
+        var productID = $(`#product_id`).val();
+        var currentOrderId = "{{order_id}}";
+
+        if (productID) {
+            $.ajax({
+                url: `/process_A/${currentOrderId}/`,
+                type: 'GET',
+                data: {
+                    'product_id': productID
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        var Product_ID_detail = $(`#Product_ID_detail`);
+                        var Product_content = $(`#Product_content`);
+                        Product_ID_detail.empty();
+                        Product_content.empty();
+                        if (response.data.length > 0) {
+                            response.data.forEach(function(good) {
+                                Product_ID_detail.append(
+                                    '<tr><td>' + good.product_id__product_id + '</td><td>' + good.product_id__product_name + 
+                                    '</td><td>' + good.product_id__product_type + '</td><td>' + good.quantity + 
+                                    '</td><td>' + good.package + '</td></tr>'
+                                );                             
+                            });
+                        };
+                        if (response.product_detail.length > 0) {
+                            response.product_detail.forEach(function(good) {
+                                Product_content.append(
+                                    '<tr><td>' + good.product_inventory + '</td><td>' + good.product_position + '</td></tr>'
+                                );
+                            });
+                        };
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    window.alert('發生錯誤：' + error);
+                }
+            });
+        } else {
+            window.alert('請輸入 Product ID');
+        }
+    });
+});
+</script>
 {% endblock %}
+
+<!--進度到了要截取使用者輸入的Product ID並在資料庫搜尋對應資料呈現在此頁面，且不重新加載頁面-->

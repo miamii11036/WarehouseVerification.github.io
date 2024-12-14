@@ -18,7 +18,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from myweb.views import index, enroll, enrollok, user_login, member_data, modify_data, delete_member, logout, \
-    orderlist, order_detail, IDsearch, FilterSearch, start_process
+    orderlist, order_detail, IDsearch, FilterSearch, start_process, process_A
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -34,5 +34,6 @@ urlpatterns = [
     path("order_detail/<int:order_id>/", order_detail, name="order_detail"),
     path("IDsearch/", IDsearch, name = "IDsearch"),
     path("Filtersearch/", FilterSearch, name="Filtersearch"),
-    path("start_process/", start_process, name="start_process" )
+    path("start_process/", start_process, name="start_process"),
+    path("process_A/<int:order_id>/", process_A, name="process_A")
 ]

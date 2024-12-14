@@ -14,7 +14,7 @@
         {% csrf_token %} 
         <div class="input-group mb-3">
             <label for="order_id" class="input-group-text">Order ID</label>
-            <input type="text" class="form-control" id="order_id" name="order_id" required>
+            <input type="text" class="form-control" id="order_id" name="order_id" value="{{order_id}}" required>
         </div>
 
         <!--處理種類選擇-->

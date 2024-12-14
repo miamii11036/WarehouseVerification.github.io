@@ -6,7 +6,7 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from myweb.form import UserInfoForm, ModifyUserInfo, DeleteUser
-from myweb.models import UserInfo, OrderList, OrderDetail, ProcessTime
+from myweb.models import UserInfo, OrderList, OrderDetail, ProcessTime, Product
 from myweb.services import ProcessDurationServer
 
 
@@ -336,50 +336,58 @@ def FilterSearch(request):
         return render(request,"execute/filtersearch.html", {"page_obj": page_obj, "year": year, "month":month, "region": region})
 
 def start_process(request):
+    """
+    當使用者輸入Order ID與選擇Process種類並送出後，系統會紀錄送出時間戳到ProcessTime table儲存，
+    並跳轉到對應Process處理頁面。
+    當條件滿足時，services.py會計算該處理的耗費天數送到ProcessTime table儲存。
+    """
     status = request.session.get("is_login")
     if not status: 
         #如果沒登入，則返回登入畫面
         return redirect("/")
     else:
         if request.method == "GET":
-            order_id = request.GET.get("order_id")
+            order_id = request.GET.get("order_id") #接收前端的資料
             process_type = request.GET.get("ProcessType")
             if not order_id or not process_type:
                 messages.add_message(request, messages.DEBUG, "沒有送輸入的表單資料過來")
                 return render(request, "implement/start.html")
             else:
                 try:
-                    order_id_databasse = OrderList.objects.get(order_id=order_id)
-                except OrderList.DoesNotExist:
+                    order_id_databasse = OrderList.objects.get(order_id=order_id) #用order_id搜尋訂單資訊
+                except OrderList.DoesNotExist:#如果order_id不存在的話
                     messages.add_message(request, messages.WARNING, "The Order ID is not existence")
                     return redirect("/start_process")
-                    
-                        
-                process_time, created = ProcessTime.objects.get_or_create(order_id=order_id_databasse)
-                current_time = timezone.now()
-                if process_type == 'A':
-                    process_time.process_A = current_time
-                elif process_type == 'B':
-                    process_time.process_B = current_time
-                elif process_type == 'C':
-                    process_time.process_C = current_time
-                process_time.save()
-
-                duration = ProcessDurationServer.get_last_duration(process_time)
-                if duration is not None:
-                    if process_type == 'B':
-                        process_time.duration_A = duration
-                    elif process_type == 'C':
-                        process_time.duration_B = duration
-                process_time.save()
-
-
-                order_id_detail = OrderDetail.objects.filter(order_id=order_id_databasse)
-                if not order_id_detail:
+                order_id_detail = OrderDetail.objects.filter(order_id=order_id_databasse) #用order_id搜尋訂單內容
+                if not order_id_detail: #如果訂單沒有內容的話
                     messages.add_message(request, messages.WARNING, "The Order is empty")
-                    return render(request, "implement/start.html")
-                else:
-                    orderdetail = [
+                    return render(request, "implement/start.html", {"order_id":order_id})
+                else:       
+                    process_time, created = ProcessTime.objects.get_or_create(order_id=order_id_databasse) 
+                    #用order_id搜尋ProcessTime table。created用來紀錄get_or_create函數的操作結果
+                    #如果有資料則created=False表示order_id已存在於資料庫並取得此資料
+                    #如果沒資料則created=True表示資料庫沒有此order_id，則在資料庫中創建此id資料
+                    current_time = timezone.now() #紀錄當下時間戳
+                    if process_type == 'A':
+                        process_time.process_A = current_time #則在ProcessTime資料庫的process_A column紀錄當下時間戳
+                    elif process_type == 'B':
+                        process_time.process_B = current_time
+                    elif process_type == 'C':
+                        process_time.process_C = current_time
+                    process_time.save() #將變更儲存
+
+                    duration = ProcessDurationServer.get_last_duration(process_time) #呼叫services.py的get_last_duration函數，取得process的耗時天數
+                    if duration is not None: 
+                        if process_type == 'B':
+                            process_time.duration_A = duration #當process_type為B時代表process_A已結束，則函數計算出來的天數為process_A的耗時天數
+                        elif process_type == 'C': #當process_type為C時代表兩種可能，一個是A->C 或 B->C
+                            if process_time.process_B is None: #當process_B column沒有時間戳資料，代表跳過流程B，直接從流程A進入流程C
+                                process_time.duration_A = duration
+                            else:
+                                process_time.duration_B = duration
+                    process_time.save()
+
+                    orderdetail = [ #取得該order_id的訂單內容資料
                         {
                             "product_id": product.product_id.product_id,
                             "product_name": product.product_id.product_name,
@@ -391,15 +399,51 @@ def start_process(request):
                         }
                         for product in order_id_detail
                     ]
-                    if process_type == 'A':
+                    if process_type == 'A': #如果使用者選擇流程A則進入流程A的處理畫面
                         return render(request, "implement/process_A.html",
-                                    {"order_id": order_id_databasse, "orderdetail": orderdetail})
+                                    {"order_id": order_id, "orderdetail": orderdetail})
                     if process_type == 'B':
                         return render(request, "implement/process_B.html",
-                                    {"order_id": order_id_databasse, "orderdetail": orderdetail})
+                                    {"order_id": order_id, "orderdetail": orderdetail})
                     if process_type == 'C':
                         return render(request, "implement/process_C.html",
-                                    {"order_id": order_id_databasse, "orderdetail": orderdetail})
+                                    {"order_id": order_id, "orderdetail": orderdetail})
         else:
-            print("RRRRRR")
+            print("RRRRRR") #RRRRRR
         return render(request, "implement/start.html")
+    
+def process_A(request, order_id):
+    status = request.session.get("is_login")
+    if not status:
+        return JsonResponse({'status': 'error', 'message': '請先登入'}, status=401)
+    if request.method != "GET":
+        return JsonResponse({'status': 'error', 'message': '不支援的請求方法'}, status=405)
+    
+    product_id = request.GET.get("product_id")
+    if not product_id:
+        return JsonResponse({'status': 'error', 'message': '未提供 Product ID'}, status=400)
+    try:
+        product_data_in_orderid = OrderDetail.objects.filter(order_id=order_id, product_id=product_id)
+        if not product_data_in_orderid.exists():
+            return JsonResponse({'status': 'error', 'message': '找不到對應的產品資料'}, status=404)
+        product = list(product_data_in_orderid.values(
+            'product_id__product_id',
+            'product_id__product_name',
+            'product_id__product_type',
+            'quantity',
+            'package'
+        ))
+
+        product_detail = Product.objects.filter(product_id=product_id)
+        productdetail = list(product_detail.values(
+            'product_inventory',
+            'product_position'
+        ))
+
+        return JsonResponse({
+            'status': 'success',
+            'data': product,
+            'product_detail': productdetail
+        })
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
