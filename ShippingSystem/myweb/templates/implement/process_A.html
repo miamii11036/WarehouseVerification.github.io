@@ -3,112 +3,27 @@
 {% block title %}Process A{% endblock %}
 
 {% block head %}
-<style>
-    body{
-        height: 100vh;
-        min-width: 1711px;  
-    }
-    .border.border-2.shadow.p-3.mb-5.bg-body-tertiary.rounded {
-        flex: 1; 
-        margin-top: 50px; 
-        min-width: 700px; 
-        margin: auto;
-        max-width: 1500px;
-    }
-    #OrderIDSearch {
-        margin-top: 70px;
-    }
-    #containers {
-        align-items:flex-start !important;
-        margin-top: 20px;
-        justify-items:center;
-    }
-    #order-detail-container {
-        max-inline-size: 10px;
-        min-width: 435px !important;
-        height: fit-content;
-        margin-top: 0 !important;
-        margin-bottom: 0 !important;
-    }
-    #order-product-container {
-        height: fit-content;
-        margin-top: 0 !important;
-        margin-bottom: 0 !important;
-    }
-    #product_content_container {
-        max-inline-size: 10px;
-        min-width: 435px !important;
-        height: fit-content;
-        margin:auto;
-        margin-top: 0 !important;
-        margin-bottom: 0 !important;
-    }
-    #product_container {
-        max-inline-size: 10px;
-        min-width: 425px !important;
-        height: fit-content;
-        margin-bottom: 0px !important;
-        
-    }
-    #product_other_Order_container {
-        max-inline-size: 10px;
-        min-width: 425px !important;
-        height: fit-content;
-        margin-top: 0 !important;
-    }
-
-    .btn-outline-secondary{
-        --bs-btn-color: #46656F;
-        --bs-btn-border-color: #46656F;
-        --bs-btn-hover-color: #FBFBFB;
-        --bs-btn-hover-bg: #46656F;
-        --bs-btn-hover-border-color:#46656F;
-        --bs-btn-active-color: #FBFBFB;
-        --bs-btn-active-bg: #46656F;
-        --bs-btn-active-border-color: #46656F;
-        --bs-btn-disabled-color: #46656F;
-        --bs-btn-disabled-border-color: #46656F;
-    }
-    @media (max-width: 1725px) { 
-        .responsive-form { 
-            flex-direction: column; 
-        } 
-    }
-    .table-light {
-        background-color: #f8f9fa;
-    }
-    .form-check-input {
-        --bs-form-check-bg: #f8f9fa;   
-    }
-    .form-check-input:checked {
-        background-color: #46656F;
-        border-color: #46656F;
-    }
-    .form-check-input:focus {
-        border-color: #46656F;
-        outline: 0;
-        box-shadow: 0 0 0 0.25rem #f8f9fa;
-    }
-</style>
+<link href="{% static 'css/processA.css' %}" rel="stylesheet" type="text/css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 {% endblock %}
 
 {% block content %}
-<!--Product_id輸入框-->
-<div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded" id="OrderIDSearch">
-    <form action="{% url 'process_A' order_id %}" method="get" class="hstack gap-3">
-        {% csrf_token %} 
-        <div class="input-group mb-3" style="margin-bottom: 0px !important;">
-            <label for="product_id" class="input-group-text" id="ProductID">Product ID</label>
-            <input type="text" class="form-control" id="product_id" name="product_id" required>
-        </div>
-        <div class="hstack gap-3">
-            <button class="btn btn-outline-secondary" type="submit" id="CheckButton">Check</button> 
-            <div class="vr"></div>
-            <button  type="reset" class="btn btn-outline-secondary">Reset</button>
-        </div>
-    </form>
-</div>
+    <!--Product_id輸入框-->
+    <div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded" id="OrderIDSearch">
+        <form action="{% url 'process_A' order_id %}" method="get" class="hstack gap-3">
+            {% csrf_token %} 
+            <div class="input-group mb-3" id="product_id_input">
+                <label for="product_id" class="input-group-text" id="ProductID">Product ID</label>
+                <input type="text" class="form-control" id="product_id" name="product_id" required>
+            </div>
+            <div class="hstack gap-3">
+                <button class="btn btn-outline-secondary" type="submit" id="CheckButton">Check</button> 
+                <div class="vr"></div>
+                <button  type="reset" class="btn btn-outline-secondary">Reset</button>
+            </div>
+        </form>
+    </div>
+
 
 <!--Process A工作項目-->
 <div class="hstack gap-3" id="containers">
@@ -211,7 +126,7 @@ $(document).ready(function() {
         });
         $(".modal-body").empty().append('<p>' + message + '</p>');
     };
-
+    /*輸入Product ID並點擊checkbutton後會自動顯示該product的訂單內容、庫存與位置、其他有該product的訂單資訊*/
     $(`#CheckButton`).click(function(e) { //當Check點擊時
         e.preventDefault(); //防止頁面重新加載
         var productID = $(`#product_id`).val(); //將使用者輸入的Product ID賦予給變數
@@ -240,6 +155,7 @@ $(document).ready(function() {
                                     '</td><td>' + good.package + '</td></tr>'
                                 );                             
                             });
+                            /*自動勾選該product的checkbox*/
                             $(`.order-detail-data tr`).each(function() { //選擇class=order-detail-data的所有tr tag。每一個tr執行這個函數
                                 var rowProductId = $(this).find('td:nth-child(2)').text().trim(); 
                                 //將當前的tr tag($(this))的第二個td tag(td:nth-child(2))的文字內容(text())，移除文字的前後空格(trim())後存到變量
@@ -252,7 +168,7 @@ $(document).ready(function() {
                         } else {
                             showWarningModal('No product found.');
                         };
-                        
+                        /*填入該product的庫存與儲存位置*/
                         if (response.product_detail.length > 0) { //檢查送過來的product_detail資料是否存在
                             response.product_detail.forEach(function(good) {
                                 Product_content.append(
@@ -262,6 +178,7 @@ $(document).ready(function() {
                         } else { 
                             showWarningModal('No product found.');
                         };
+                        /*填入該product的其他訂單資訊*/
                         if (response.product_other_order.length > 0) { //檢查送過來的product_detail資料是否存在
                             response.product_other_order.forEach(function(good) {
                                 Product_other_content.append(

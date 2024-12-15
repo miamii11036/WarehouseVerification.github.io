@@ -3,26 +3,204 @@
 {% block title %}Process B{% endblock %}
 
 {% block head %}
-<style>
-    .border.border-2.shadow.p-3.mb-5.bg-body-tertiary.rounded {
-        flex: 1; 
-        margin-top: 50px; 
-        min-width: 700px; 
-        margin: auto;
-    }
-</style>
+<link href="{% static 'css/processA.css' %}" rel="stylesheet" type="text/css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 {% endblock %}
 
 {% block content %}
-<!--Product_id輸入框-->
-<div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded" id="OrderIDSearch">
-    <form action="" method="get" class="hstack gap-3">
-        {% csrf_token %} 
-        <div class="input-group mb-3" style="margin-bottom: 0px !important;">
-            <label for="product_id" class="input-group-text" id="OrderID">Order ID</label>
-            <input type="text" class="form-control" id="product_id" name="product_id" required>
+    <!--Product_id輸入框-->
+    <div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded" id="OrderIDSearch">
+        <form action="{% url 'process_B' order_id %}" method="get" class="hstack gap-3">
+            {% csrf_token %} 
+            <div class="input-group mb-3" id="product_id_input">
+                <label for="product_id" class="input-group-text" id="ProductID">Product ID</label>
+                <input type="text" class="form-control" id="product_id" name="product_id" required>
+            </div>
+            <div class="hstack gap-3">
+                <button class="btn btn-outline-secondary" type="submit" id="CheckButton">Check</button> 
+                <div class="vr"></div>
+                <button  type="reset" class="btn btn-outline-secondary">Reset</button>
+            </div>
+        </form>
+    </div>
+
+
+<!--Process A工作項目-->
+<div class="hstack gap-3" id="containers">
+    <!--訂單的所有內容品項-->
+    <div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded" id="order-detail-container">
+        <table class="table">
+            <thead class="table-light">
+              <tr>
+                <th scope="col"></th>
+                <th scope="col">Product ID</th>
+                <th scope="col">Product name</th>
+              </tr>
+            </thead>
+            <tbody class="order-detail-data">
+            {% for product in orderdetail %}
+              <tr>
+                <td><input type="checkbox" class="form-check-input"></td>
+                <td>{{product.product_id}}</td>
+                <td>{{product.product_name}}</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <!--訂單中對該product的內容-->
+    <div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded" id="order-product-container">
+        <table class="table"> 
+            <thead class="table-light">
+                <tr>
+                    <th>Product ID</th>
+                    <th>Product Name</th>
+                    <th>Product Type</th>
+                    <th>Quantity</th>
+                    <th>Package</th>
+                </tr>
+            </thead>
+            <tbody id="Product_ID_detail">
+                <!--使用者輸入的product_id在該order_id的內容資料-->
+            </tbody>
+        </table>
+    </div>
+    <div class="vstack gap-3" id="product_content_container">
+        <!--該product的庫存與位置-->
+        <div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded" id="product_container">
+            <table class="table">
+                <thead class="table-light">
+                    <tr>
+                        <th>Inventory</th>
+                        <th>Position</th>
+                    </tr>
+                </thead>
+                <tbody id="Product_content">
+                    
+                </tbody>
+            </table>
         </div>
-    </form>
+        <!--該product的其他訂單內容-->
+        <div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded" id="product_other_Order_container">
+            <table class="table">
+                <thead class="table-light">
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Quantity</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="Product_other_content">
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
-HI!B
+
+
+<!--錯誤警告-->
+<div id="warningModal" class="modal" tabindex="-1" style="display:none;">
+    <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title">Warning</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+        </div>
+    </div>
+    </div>
+</div>
+
+
+<script>
+$(document).ready(function() {
+    /*當錯誤發生時顯示錯誤警告*/
+    function showWarningModal(message) {
+        const modal = new bootstrap.Modal(document.getElementById("warningModal"));
+        modal.show();
+        document.getElementById("warningModal").addEventListener("shown.bs.modal", function () {
+            document.getElementById("warningModal").setAttribute("data-bs-backdrop", "static");
+            document.getElementById("warningModal").setAttribute("data-bs-keyboard", "false");
+        });
+        $(".modal-body").empty().append('<p>' + message + '</p>');
+    };
+    /*輸入Product ID並點擊checkbutton後會自動顯示該product的訂單內容、庫存與位置、其他有該product的訂單資訊*/
+    $(`#CheckButton`).click(function(e) { //當Check點擊時
+        e.preventDefault(); //防止頁面重新加載
+        var productID = $(`#product_id`).val(); //將使用者輸入的Product ID賦予給變數
+        var currentOrderId = "{{order_id}}"; //紀錄start_process畫面送過來的order_id並賦予給變數
+
+        if (productID) {
+            $.ajax({ //取得views.py中process_A送過來的JsonResponse資料
+                url: `/process_B/${currentOrderId}/`,
+                type: 'GET',
+                data: {
+                    'product_id': productID
+                },
+                success: function(response) { //如果成功接收資料
+                    if (response.status === 'success') { //如果後端送過來的status為success
+                        var Product_ID_detail = $(`#Product_ID_detail`);
+                        var Product_content = $(`#Product_content`);
+                        var Product_other_content = $(`#Product_other_content`);
+                        Product_ID_detail.empty();
+                        Product_content.empty();
+                        Product_other_content.empty(); //清空id=Product_ID_detail的tbody與 id=Product_content的tbody
+                        if (response.data.length > 0) { //檢查送過來data資料是否存在
+                            response.data.forEach(function(good) {
+                                Product_ID_detail.append(
+                                    '<tr><td>' + good.product_id__product_id + '</td><td>' + good.product_id__product_name + 
+                                    '</td><td>' + good.product_id__product_type + '</td><td>' + good.quantity + 
+                                    '</td><td>' + good.package + '</td></tr>'
+                                );                             
+                            });
+                            /*自動勾選該product的checkbox*/
+                            $(`.order-detail-data tr`).each(function() { //選擇class=order-detail-data的所有tr tag。每一個tr執行這個函數
+                                var rowProductId = $(this).find('td:nth-child(2)').text().trim(); 
+                                //將當前的tr tag($(this))的第二個td tag(td:nth-child(2))的文字內容(text())，移除文字的前後空格(trim())後存到變量
+                                //即是{{product.product_id}}的內容
+                                if (rowProductId === productID) { //如果{{product.product_id}}與使用者輸入的Product ID一致時
+                                    $(this).find('input[type="checkbox"]').prop('checked', true); //找到這個tr tag中，type=checkbox的input tag並勾選它
+                                                                        //使用 .prop() 設定復選框的 checked 屬性為 true，也就是勾選復選框
+                                }   
+                            });                            
+                        } else {
+                            showWarningModal('No product found.');
+                        };
+                        /*填入該product的庫存與儲存位置*/
+                        if (response.product_detail.length > 0) { //檢查送過來的product_detail資料是否存在
+                            response.product_detail.forEach(function(good) {
+                                Product_content.append(
+                                    '<tr><td>' + good.product_inventory + '</td><td>' + good.product_position + '</td></tr>'
+                                );
+                            });
+                        } else { 
+                            showWarningModal('No product found.');
+                        };
+                        /*填入該product的其他訂單資訊*/
+                        if (response.product_other_order.length > 0) { //檢查送過來的product_detail資料是否存在
+                            response.product_other_order.forEach(function(good) {
+                                Product_other_content.append(
+                                    '<tr><td>' + good.order_id__order_id + '</td><td>' + good.quantity + '</td><td>'+ good.order_id__status +'</td></tr>'
+                                );
+                            });
+                        } else { 
+                            showWarningModal('No product found.');
+                        };
+                    } else { //後端送過來的status為error，此時後端會送錯誤訊息過來
+                        showWarningModal(response.message);
+                    }
+                },//如果接收資料失敗
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                    showWarningModal(error);
+                }
+            });
+        } else { //如果使用者沒輸入資料就點擊check按鈕
+            showWarningModal('Enter Product ID, please.');
+        }
+    });
+});
+</script>
 {% endblock %}

@@ -1,0 +1,90 @@
+body{
+    height: 100vh;
+    min-width: 1731px;  
+}
+.border.border-2.shadow.p-3.mb-5.bg-body-tertiary.rounded {
+    flex: 1; 
+    margin-top: 50px; 
+    min-width: 700px; 
+    margin: auto;
+    max-width: 1500px;
+}
+
+#OrderIDSearch {
+    margin-top: 70px !important;
+}
+#product_id_input {
+    margin-bottom: 0px !important;
+}
+
+#containers {
+    align-items:flex-start !important;
+    margin-top: 20px;
+    justify-items:center;
+}
+#order-detail-container {
+    max-inline-size: 10px;
+    min-width: 435px !important;
+    height: fit-content;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+#order-product-container {
+    height: fit-content;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+#product_content_container {
+    max-inline-size: 10px;
+    min-width: 435px !important;
+    height: fit-content;
+    margin:auto;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+#product_container {
+    max-inline-size: 10px;
+    min-width: 425px !important;
+    height: fit-content;
+    margin-bottom: 0px !important;
+    
+}
+#product_other_Order_container {
+    max-inline-size: 10px;
+    min-width: 425px !important;
+    height: fit-content;
+    margin-top: 0 !important;
+}
+
+.btn-outline-secondary{
+    --bs-btn-color: #46656F;
+    --bs-btn-border-color: #46656F;
+    --bs-btn-hover-color: #FBFBFB;
+    --bs-btn-hover-bg: #46656F;
+    --bs-btn-hover-border-color:#46656F;
+    --bs-btn-active-color: #FBFBFB;
+    --bs-btn-active-bg: #46656F;
+    --bs-btn-active-border-color: #46656F;
+    --bs-btn-disabled-color: #46656F;
+    --bs-btn-disabled-border-color: #46656F;
+}
+@media (max-width: 1725px) { 
+    .responsive-form { 
+        flex-direction: column; 
+    } 
+}
+.table-light {
+    background-color: #f8f9fa;
+}
+.form-check-input {
+    --bs-form-check-bg: #f8f9fa;   
+}
+.form-check-input:checked {
+    background-color: #46656F;
+    border-color: #46656F;
+}
+.form-check-input:focus {
+    border-color: #46656F;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem #f8f9fa;
+}

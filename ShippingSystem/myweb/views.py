@@ -374,7 +374,11 @@ def start_process(request):
                         process_time.process_B = current_time
                     elif process_type == 'C':
                         process_time.process_C = current_time
+                    elif process_type == 'Complete':
+                        process_time.complete = current_time
+                    order_id_databasse.status = process_type #更改該order的狀態
                     process_time.save() #將變更儲存
+                    order_id_databasse.save()
 
                     duration = ProcessDurationServer.get_last_duration(process_time) #呼叫services.py的get_last_duration函數，取得process的耗時天數
                     if duration is not None: 
@@ -385,6 +389,13 @@ def start_process(request):
                                 process_time.duration_A = duration
                             else:
                                 process_time.duration_B = duration
+                        elif process_type == "Complete":
+                            if process_time.duration_A is None:
+                                process_time.duration_A = duration
+                            elif process_time.duration_B is None:
+                                process_time.duration_B = duration
+                            elif process_time.duration_C is None:
+                                process_time.duration_C = duration
                     process_time.save()
 
                     orderdetail = [ #取得該order_id的訂單內容資料
@@ -413,6 +424,94 @@ def start_process(request):
         return render(request, "implement/start.html")
     
 def process_A(request, order_id):
+    status = request.session.get("is_login")
+    if not status:
+        return JsonResponse({'status': 'error', 'message': 'Please sign in first.'}, status=401)
+    if request.method != "GET":
+        return JsonResponse({'status': 'error', 'message': '不支援的請求方法'}, status=405)
+    
+    product_id = request.GET.get("product_id")
+    if not product_id:
+        return JsonResponse({'status': 'error', 'message': '未提供 Product ID'}, status=400)
+    try:
+        product_data_in_orderid = OrderDetail.objects.filter(order_id=order_id, product_id=product_id)
+        if not product_data_in_orderid.exists():
+            return JsonResponse({'status': 'error', 'message': '找不到對應的產品資料'}, status=404)
+        product = list(product_data_in_orderid.values(
+            'product_id__product_id',
+            'product_id__product_name',
+            'product_id__product_type',
+            'quantity',
+            'package'
+        ))
+
+        product_detail = Product.objects.filter(product_id=product_id)
+        productdetail = list(product_detail.values(
+            'product_inventory',
+            'product_position'
+        ))
+
+        product_other_order = OrderDetail.objects.filter(product_id=product_id) #皆複數
+        product_other_content = list(product_other_order.values(
+            'order_id__order_id',
+            'order_id__status', 
+            'quantity'
+        ))
+
+        return JsonResponse({
+            'status': 'success',
+            'data': product,
+            'product_detail': productdetail,
+            'product_other_order' : product_other_content
+        })
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    
+def process_B(request, order_id):
+    status = request.session.get("is_login")
+    if not status:
+        return JsonResponse({'status': 'error', 'message': 'Please sign in first.'}, status=401)
+    if request.method != "GET":
+        return JsonResponse({'status': 'error', 'message': '不支援的請求方法'}, status=405)
+    
+    product_id = request.GET.get("product_id")
+    if not product_id:
+        return JsonResponse({'status': 'error', 'message': '未提供 Product ID'}, status=400)
+    try:
+        product_data_in_orderid = OrderDetail.objects.filter(order_id=order_id, product_id=product_id)
+        if not product_data_in_orderid.exists():
+            return JsonResponse({'status': 'error', 'message': '找不到對應的產品資料'}, status=404)
+        product = list(product_data_in_orderid.values(
+            'product_id__product_id',
+            'product_id__product_name',
+            'product_id__product_type',
+            'quantity',
+            'package'
+        ))
+
+        product_detail = Product.objects.filter(product_id=product_id)
+        productdetail = list(product_detail.values(
+            'product_inventory',
+            'product_position'
+        ))
+
+        product_other_order = OrderDetail.objects.filter(product_id=product_id) #皆複數
+        product_other_content = list(product_other_order.values(
+            'order_id__order_id',
+            'order_id__status', 
+            'quantity'
+        ))
+
+        return JsonResponse({
+            'status': 'success',
+            'data': product,
+            'product_detail': productdetail,
+            'product_other_order' : product_other_content
+        })
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    
+def process_C(request, order_id):
     status = request.session.get("is_login")
     if not status:
         return JsonResponse({'status': 'error', 'message': 'Please sign in first.'}, status=401)
