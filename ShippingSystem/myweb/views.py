@@ -415,7 +415,7 @@ def start_process(request):
 def process_A(request, order_id):
     status = request.session.get("is_login")
     if not status:
-        return JsonResponse({'status': 'error', 'message': '請先登入'}, status=401)
+        return JsonResponse({'status': 'error', 'message': 'Please sign in first.'}, status=401)
     if request.method != "GET":
         return JsonResponse({'status': 'error', 'message': '不支援的請求方法'}, status=405)
     
@@ -440,10 +440,18 @@ def process_A(request, order_id):
             'product_position'
         ))
 
+        product_other_order = OrderDetail.objects.filter(product_id=product_id) #皆複數
+        product_other_content = list(product_other_order.values(
+            'order_id__order_id',
+            'order_id__status', 
+            'quantity'
+        ))
+
         return JsonResponse({
             'status': 'success',
             'data': product,
-            'product_detail': productdetail
+            'product_detail': productdetail,
+            'product_other_order' : product_other_content
         })
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)

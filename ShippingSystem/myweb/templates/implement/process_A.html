@@ -6,7 +6,7 @@
 <style>
     body{
         height: 100vh;
-        min-width: 1725px;   
+        min-width: 1711px;  
     }
     .border.border-2.shadow.p-3.mb-5.bg-body-tertiary.rounded {
         flex: 1; 
@@ -18,21 +18,51 @@
     #OrderIDSearch {
         margin-top: 70px;
     }
+    #containers {
+        align-items:flex-start !important;
+        margin-top: 20px;
+        justify-items:center;
+    }
     #order-detail-container {
         max-inline-size: 10px;
-        min-width: 425px !important;
+        min-width: 435px !important;
+        height: fit-content;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
     }
-
+    #order-product-container {
+        height: fit-content;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+    #product_content_container {
+        max-inline-size: 10px;
+        min-width: 435px !important;
+        height: fit-content;
+        margin:auto;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
     #product_container {
         max-inline-size: 10px;
         min-width: 425px !important;
+        height: fit-content;
+        margin-bottom: 0px !important;
+        
     }
+    #product_other_Order_container {
+        max-inline-size: 10px;
+        min-width: 425px !important;
+        height: fit-content;
+        margin-top: 0 !important;
+    }
+
     .btn-outline-secondary{
         --bs-btn-color: #46656F;
         --bs-btn-border-color: #46656F;
         --bs-btn-hover-color: #FBFBFB;
         --bs-btn-hover-bg: #46656F;
-        --bs-btn-hover-border-color:--bs-btn-hover-border-color: #46656F;
+        --bs-btn-hover-border-color:#46656F;
         --bs-btn-active-color: #FBFBFB;
         --bs-btn-active-bg: #46656F;
         --bs-btn-active-border-color: #46656F;
@@ -43,6 +73,21 @@
         .responsive-form { 
             flex-direction: column; 
         } 
+    }
+    .table-light {
+        background-color: #f8f9fa;
+    }
+    .form-check-input {
+        --bs-form-check-bg: #f8f9fa;   
+    }
+    .form-check-input:checked {
+        background-color: #46656F;
+        border-color: #46656F;
+    }
+    .form-check-input:focus {
+        border-color: #46656F;
+        outline: 0;
+        box-shadow: 0 0 0 0.25rem #f8f9fa;
     }
 </style>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -66,9 +111,9 @@
 </div>
 
 <!--Process A工作項目-->
-<div class="hstack gap-3">
+<div class="hstack gap-3" id="containers">
     <!--訂單的所有內容品項-->
-    <duv class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded" id="order-detail-container">
+    <div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded" id="order-detail-container">
         <table class="table">
             <thead class="table-light">
               <tr>
@@ -80,14 +125,14 @@
             <tbody class="order-detail-data">
             {% for product in orderdetail %}
               <tr>
-                <td><input type="checkbox" readonly></td>
+                <td><input type="checkbox" class="form-check-input"></td>
                 <td>{{product.product_id}}</td>
                 <td>{{product.product_name}}</td>
               </tr>
             {% endfor %}
             </tbody>
         </table>
-    </duv>
+    </div>
     <!--訂單中對該product的內容-->
     <div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded" id="order-product-container">
         <table class="table"> 
@@ -105,73 +150,89 @@
             </tbody>
         </table>
     </div>
-    <!--該product的庫存與位置-->
-    <div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded" id="product_container">
-        <table class="table">
-            <thead class="table-light">
-                <tr>
-                    <th>Inventory</th>
-                    <th>Position</th>
-                </tr>
-            </thead>
-            <tbody id="Product_content">
-                
-            </tbody>
-        </table>
+    <div class="vstack gap-3" id="product_content_container">
+        <!--該product的庫存與位置-->
+        <div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded" id="product_container">
+            <table class="table">
+                <thead class="table-light">
+                    <tr>
+                        <th>Inventory</th>
+                        <th>Position</th>
+                    </tr>
+                </thead>
+                <tbody id="Product_content">
+                    
+                </tbody>
+            </table>
+        </div>
+        <!--該product的其他訂單內容-->
+        <div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded" id="product_other_Order_container">
+            <table class="table">
+                <thead class="table-light">
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Quantity</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="Product_other_content">
+                    
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
 
 <!--錯誤警告-->
-{% if messages %}
-    {% for message in messages %}
-    <div id="warningModal" class="modal" tabindex="-1">
-        <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h5 class="modal-title">Warning</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-            {{message}}
-            </div>
+<div id="warningModal" class="modal" tabindex="-1" style="display:none;">
+    <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title">Warning</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+        <div class="modal-body">
         </div>
     </div>
-    {% endfor %}
-{% endif %}
-{% if messages %}
-<script>
-    const modal = new bootstrap.Modal(document.getElementById("warningModal"));
-    modal.show();
-    document.getElementById("warningModal").addEventListener("shown.bs.modal", function () {
-    document.getElementById("warningModal").setAttribute("data-bs-backdrop", "static");
-    document.getElementById("warningModal").setAttribute("data-bs-keyboard", "false");
-    });
-</script>
-{% endif %}
+    </div>
+</div>
+
 
 <script>
 $(document).ready(function() {
-    $(`#CheckButton`).click(function(e) {
-        e.preventDefault();
-        var productID = $(`#product_id`).val();
-        var currentOrderId = "{{order_id}}";
+    /*當錯誤發生時顯示錯誤警告*/
+    function showWarningModal(message) {
+        const modal = new bootstrap.Modal(document.getElementById("warningModal"));
+        modal.show();
+        document.getElementById("warningModal").addEventListener("shown.bs.modal", function () {
+            document.getElementById("warningModal").setAttribute("data-bs-backdrop", "static");
+            document.getElementById("warningModal").setAttribute("data-bs-keyboard", "false");
+        });
+        $(".modal-body").empty().append('<p>' + message + '</p>');
+    };
+
+    $(`#CheckButton`).click(function(e) { //當Check點擊時
+        e.preventDefault(); //防止頁面重新加載
+        var productID = $(`#product_id`).val(); //將使用者輸入的Product ID賦予給變數
+        var currentOrderId = "{{order_id}}"; //紀錄start_process畫面送過來的order_id並賦予給變數
 
         if (productID) {
-            $.ajax({
+            $.ajax({ //取得views.py中process_A送過來的JsonResponse資料
                 url: `/process_A/${currentOrderId}/`,
                 type: 'GET',
                 data: {
                     'product_id': productID
                 },
-                success: function(response) {
-                    if (response.status === 'success') {
+                success: function(response) { //如果成功接收資料
+                    if (response.status === 'success') { //如果後端送過來的status為success
                         var Product_ID_detail = $(`#Product_ID_detail`);
                         var Product_content = $(`#Product_content`);
+                        var Product_other_content = $(`#Product_other_content`);
                         Product_ID_detail.empty();
                         Product_content.empty();
-                        if (response.data.length > 0) {
+                        Product_other_content.empty(); //清空id=Product_ID_detail的tbody與 id=Product_content的tbody
+                        if (response.data.length > 0) { //檢查送過來data資料是否存在
                             response.data.forEach(function(good) {
                                 Product_ID_detail.append(
                                     '<tr><td>' + good.product_id__product_id + '</td><td>' + good.product_id__product_name + 
@@ -179,27 +240,50 @@ $(document).ready(function() {
                                     '</td><td>' + good.package + '</td></tr>'
                                 );                             
                             });
+                            $(`.order-detail-data tr`).each(function() { //選擇class=order-detail-data的所有tr tag。每一個tr執行這個函數
+                                var rowProductId = $(this).find('td:nth-child(2)').text().trim(); 
+                                //將當前的tr tag($(this))的第二個td tag(td:nth-child(2))的文字內容(text())，移除文字的前後空格(trim())後存到變量
+                                //即是{{product.product_id}}的內容
+                                if (rowProductId === productID) { //如果{{product.product_id}}與使用者輸入的Product ID一致時
+                                    $(this).find('input[type="checkbox"]').prop('checked', true); //找到這個tr tag中，type=checkbox的input tag並勾選它
+                                                                        //使用 .prop() 設定復選框的 checked 屬性為 true，也就是勾選復選框
+                                }   
+                            });                            
+                        } else {
+                            showWarningModal('No product found.');
                         };
-                        if (response.product_detail.length > 0) {
+                        
+                        if (response.product_detail.length > 0) { //檢查送過來的product_detail資料是否存在
                             response.product_detail.forEach(function(good) {
                                 Product_content.append(
                                     '<tr><td>' + good.product_inventory + '</td><td>' + good.product_position + '</td></tr>'
                                 );
                             });
+                        } else { 
+                            showWarningModal('No product found.');
                         };
+                        if (response.product_other_order.length > 0) { //檢查送過來的product_detail資料是否存在
+                            response.product_other_order.forEach(function(good) {
+                                Product_other_content.append(
+                                    '<tr><td>' + good.order_id__order_id + '</td><td>' + good.quantity + '</td><td>'+ good.order_id__status +'</td></tr>'
+                                );
+                            });
+                        } else { 
+                            showWarningModal('No product found.');
+                        };
+                    } else { //後端送過來的status為error，此時後端會送錯誤訊息過來
+                        showWarningModal(response.message);
                     }
-                },
+                },//如果接收資料失敗
                 error: function(xhr, status, error) {
                     console.error('Error:', error);
-                    window.alert('發生錯誤：' + error);
+                    showWarningModal(error);
                 }
             });
-        } else {
-            window.alert('請輸入 Product ID');
+        } else { //如果使用者沒輸入資料就點擊check按鈕
+            showWarningModal('Enter Product ID, please.');
         }
     });
 });
 </script>
 {% endblock %}
-
-<!--進度到了要截取使用者輸入的Product ID並在資料庫搜尋對應資料呈現在此頁面，且不重新加載頁面-->

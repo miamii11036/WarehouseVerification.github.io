@@ -7,7 +7,7 @@ body{
     --bs-btn-border-color: #46656F;
     --bs-btn-hover-color: #FBFBFB;
     --bs-btn-hover-bg: #46656F;
-    --bs-btn-hover-border-color:--bs-btn-hover-border-color: #46656F;
+    --bs-btn-hover-border-color:#46656F;
     --bs-btn-active-color: #FBFBFB;
     --bs-btn-active-bg: #46656F;
     --bs-btn-active-border-color: #46656F;
