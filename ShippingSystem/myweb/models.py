@@ -71,3 +71,6 @@ class ProcessTime(models.Model):
     duration_A = models.FloatField(null=True, blank=True)
     duration_B = models.FloatField(null=True, blank=True)
     duration_C = models.FloatField(null=True, blank=True)
+
+    def __str__(self):
+        return f"order_id:{self.order_id.order_id}, process_A:{self.process_A}, process_B:{self.process_B}, process_C:{self.process_C}, complete:{self.complete}, duration_A:{self.duration_A}, duration_B:{self.duration_B}, duration_C:{self.duration_C}"

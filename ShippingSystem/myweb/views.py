@@ -5,6 +5,7 @@ from django.db import IntegrityError
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.utils import timezone
+from datetime import datetime
 from myweb.form import UserInfoForm, ModifyUserInfo, DeleteUser
 from myweb.models import UserInfo, OrderList, OrderDetail, ProcessTime, Product
 from myweb.services import ProcessDurationServer
@@ -424,6 +425,9 @@ def start_process(request):
         return render(request, "implement/start.html")
     
 def process_A(request, order_id):
+    """
+    初庫前檢核，提供使用者該訂單的所有品項清單、該product id的出貨內容、庫存、位置、其他訂單的出貨內容
+    """
     status = request.session.get("is_login")
     if not status:
         return JsonResponse({'status': 'error', 'message': 'Please sign in first.'}, status=401)
@@ -468,6 +472,9 @@ def process_A(request, order_id):
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
     
 def process_B(request, order_id):
+    """
+    跟A一樣
+    """
     status = request.session.get("is_login")
     if not status:
         return JsonResponse({'status': 'error', 'message': 'Please sign in first.'}, status=401)
@@ -512,6 +519,7 @@ def process_B(request, order_id):
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
     
 def process_C(request, order_id):
+    
     status = request.session.get("is_login")
     if not status:
         return JsonResponse({'status': 'error', 'message': 'Please sign in first.'}, status=401)
@@ -554,3 +562,52 @@ def process_C(request, order_id):
         })
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    
+def status(request):
+    status = request.session.get("is_login")
+    if not status:
+        return redirect("/")
+    else:
+        existing_order_ids = ProcessTime.objects.values_list('order_id', flat=True)
+        orderIDs = OrderList.objects.filter(order_id__in=existing_order_ids).order_by("-order_id")
+        paginators = Paginator(orderIDs, 10)
+        pag_number = request.GET.get("page", 1)
+        try:
+            page_obj = paginators.get_page(pag_number)
+        except EmptyPage: #當頁碼超出範圍時拋出的異常
+            return JsonResponse({"orders": [], "has_next": False, "total_pages": paginators.num_pages})
+
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest': 
+            orderID = [
+                {
+                    "order_id" : order.order_id,
+                    "year" : order.year,
+                    "month" : order.month,
+                    "region" : order.region,
+                    "client" : order.client,
+                    "status" : order.status
+                }
+                for order in page_obj
+            ]
+            return JsonResponse({"orders":orderID, "has_next":page_obj.has_next(), "total_pages": paginators.num_pages})
+        return render(request, "execute/status.html", {"page_obj" : page_obj})
+
+def status_detail(request, order_id):
+    try:
+        process_data = ProcessTime.objects.filter(order_id = order_id)
+        process_detail = [
+            {
+                "process_A" : "Processing" if data.duration_A is None else data.duration_A,
+                "process_B" : "Processing" if data.duration_B is None else data.duration_B,
+                "process_C" : "Processing" if data.duration_C is None else data.duration_C,
+                "complete":  "Not Complete" if data.complete is None else timezone.localtime(data.complete).strftime("%Y-%m-%d %H:%M")
+            }
+            for data in process_data
+        ]
+        return JsonResponse({"process_detail" : process_detail})
+    except ProcessTime.DoesNotExist:
+        return JsonResponse({"error": "No process data found"}, status=404)
+    except ValueError as e:
+        return JsonResponse({"error": f"Date format error: {e}"}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)

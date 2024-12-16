@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Status{% endblock %}
+{% block head %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+<link href="{% static 'css/search.css' %}" rel="stylesheet" type="text/css">
+{% endblock %}
+
+{% block content %}
+<div class="vstack gap-3">
+    <!--各處理程序平均耗時天數-->
+
+    <!--訂單列表-->
+    <div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded"  style="max-width: 2100px;">
+        <table class="table table-hover" id="order-list-table">
+            <thead class="table-light">
+                <th id = "column1">Order ID</th>
+                <th id = "column1">Year</th>
+                <th id = "column1">Month</th>
+                <th id = "column1">Region</th>
+                <th id = "column1">Client</th>
+                <th id = "column1" style="min-width: 70px;">Status</th>
+                <th id = "column1"></th>
+            </thead>
+            <tbody> 
+                {% for order in page_obj %}
+                <!--填入每一張訂單-->
+                <tr class="order-list" data-order-id="{{order.order_id}}">
+                                    <!--data-order-id為自定義屬性，使用data-*屬性可以在script區域中使用data()來取得該屬性的值-->
+                    <td>{{order.order_id}}</td>
+                    <td>{{order.year}}</td>
+                    <td>{{order.month}}</td>
+                    <td>{{order.region}}</td>
+                    <td>{{order.client}}</td>
+                    <td>{{order.status}}</td>
+                    <td style="max-width: fit-content; padding-top: 8px; padding-left: 0px;">
+                        <button class="expand-btn" id="submit">Expand/Hide</button>
+                    </td>
+                </tr>
+                <!--設定訂單的詳細處理歷史-->
+                <tr class="order-detail" id="order-process-{{order.order_id}}" style="display: none;" >
+                    <!--合併一列的儲存格，與order-list表格做出區別，因為兩個table的column數量不一樣-->
+                    <td colspan="7">
+                        <!--開始填入Process Time的內容-->
+                        <table class="table table-striped">
+                            <thead class="table-light">
+                                <th>Process A</th>
+                                <th>Process B</th>
+                                <th>Process C</th>
+                                <th>Complete</th>
+                            </thead>
+                            <tbody class="order-process-data"><!--Json傳遞過來的資料開始填入-->
+                                
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!--分頁按鈕-->
+    <nav>
+        <ul class="pagination justify-content-center" id="pagination">
+            <!-- Previous 按鈕 -->
+            <li class="page-item disabled" id="prev-page">
+                <a class="page-link" href="#" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <!-- 動態頁碼將由 JavaScript 插入 -->   
+            <!-- Next 按鈕 -->
+            <li class="page-item" id="next-page">
+                <a class="page-link" href="#" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+<!--返回頂部按鈕-->
+<div class="card">
+    <div class="card-body">
+    <a href="#navbar"><img src="{% static 'image/UpSquared.png' %}"></a>
+    </div>
+</div>
+
+<!--錯誤提示-->
+{% if messages %}
+    {% for message in messages %}
+    <div id="warningModal" class="modal" tabindex="-1">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title">Warning</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            {{message}}
+            </div>
+        </div>
+        </div>
+    </div>
+    {% endfor %}
+{% endif %}
+{% if messages %}
+<script>
+    const modal = new bootstrap.Modal(document.getElementById("warningModal"));
+    modal.show();
+    document.getElementById("warningModal").addEventListener("shown.bs.modal", function () {
+    document.getElementById("warningModal").setAttribute("data-bs-backdrop", "static");
+    document.getElementById("warningModal").setAttribute("data-bs-keyboard", "false");
+    });
+</script>
+{% endif %}
+
+<script>
+$(document).ready(function(e) {
+    /*當錯誤發生時顯示錯誤警告*/
+    function showWarningModal(message) {
+        const modal = new bootstrap.Modal(document.getElementById("warningModal"));
+        modal.show();
+        document.getElementById("warningModal").addEventListener("shown.bs.modal", function () {
+            document.getElementById("warningModal").setAttribute("data-bs-backdrop", "static");
+            document.getElementById("warningModal").setAttribute("data-bs-keyboard", "false");
+        });
+        $(".modal-body").empty().append('<p>' + message + '</p>');
+    };
+
+    let currentPage = 1;
+    const orderlist = $("#order-list-table tbody");
+    const pagination = $("#pagination");
+    $(`.order-detail`).hide();
+
+    function loadOrder(page) {
+        $.get(`/status/?page=${page}`)
+            .done(function(response) {
+                const orders = response.orders;
+                const hasNext = response.has_next;
+                const totalPages = response.total_pages;
+
+                orderlist.empty();
+                orders.forEach(order => {
+                    orderlist.append(`
+                        <tr class="order-list" data-order-id="${order.order_id}">
+                            <td>${order.order_id}</td>
+                            <td>${order.year}</td>
+                            <td>${order.month}</td>
+                            <td>${order.region}</td>
+                            <td>${order.client}</td>
+                            <td>${order.status}</td>
+                            <td style="max-width: fit-content; padding-top: 8px; padding-left: 0px;">
+                                <button class="expand-btn" id="submit">Expand/Hide</button>
+                            </td>
+                        </tr>
+                        <tr class="order-detail" id="order-process-${order.order_id}" style="display: none;" >
+                            <td colspan="7">
+                                <table class="table table-striped">
+                                    <thead class="table-light">
+                                        <th>Process A</th>
+                                        <th>Process B</th>
+                                        <th>Process C</th>
+                                        <th>Complete</th>
+                                    </thead>
+                                    <tbody class="order-process-data">
+                                        
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    `);
+                });
+                updatePagination(page, totalPages, hasNext);
+
+                $(".expand-btn").on("click", function(e) {
+                    e.preventDefault();
+                    const row = $(this).closest("tr");
+                    const orderID = row.data("order-id");
+                    const processdetail = $(`#order-process-${orderID}`);
+
+                    if (processdetail.is(":visible")) {
+                        processdetail.hide();
+                    } else {
+                        if (processdetail.find(".order-process-data").children().length === 0) {
+                        $.get(`/status_detail/${orderID}/`, function(data) {
+                            const process_data = data.process_detail;
+                            const tbody = processdetail.find(".order-process-data");
+                            
+                            if (process_data.length != 0) {
+                                tbody.empty();
+                                process_data.forEach(data =>{
+                                tbody.append(`
+                                    <tr>
+                                        <td>${data.process_A}</td>
+                                        <td>${data.process_B}</td>
+                                        <td>${data.process_C}</td>
+                                        <td>${data.complete}</td>
+                                    </tr>
+                                `);
+                            });
+                            } else {
+                                $(".expand-btn").addClass("disabled");
+                                showWarningModal('No process data');
+                            }
+                        });
+                        }
+                        processdetail.show();   
+                    }
+                });
+            })
+            .fail(function(error) {
+                console.error("Error", error);
+                showWarningModal(error);
+            });
+    }
+
+    function updatePagination(page, totalPage, hasNext) {
+        pagination.find(".page-item").not("#prev-page, #next-page").remove();
+
+        for (let i = 1; i <= totalPage; i++) {
+            const activeClass = i === page ? "active" : ""; 
+            $(`<li class="page-item ${activeClass}"><a class="page-link" href="#">${i}</a></li>`)
+                .insertBefore("#next-page")
+                .on("click", function(e) {
+                    e.preventDefault();
+                    if (i !== currentPage) {
+                        currentPage = i;
+                        loadOrder(currentPage);
+                    }
+                });
+        }
+        if (page == 1) {
+            $("#prev-page").addClass("disable");
+        } else {
+            $("#prev-page").removeClass("disable").off("click").on("click", function(e) {
+                e.preventDefault();
+                if (currentPage > 1) {
+                    currentPage--;
+                    loadOrder(currentPage);
+                }
+            });
+        }
+        if (!hasNext) {
+            $("#next-page").addClass("disable");
+        } else {
+            $("#next-page").removeClass("disable").on("click", function(e) {
+                e.preventDefault();
+                currentPage++;
+                loadOrder(currentPage);
+            });
+        }
+    }
+    loadOrder(1);
+});
+</script>
+
+{% endblock %}
