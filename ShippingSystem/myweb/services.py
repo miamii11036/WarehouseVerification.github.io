@@ -56,6 +56,6 @@ class ProcessDurationServer:
         if start_time and end_time:
             duration = end_time - start_time
             days = duration.total_seconds() / 86400 #轉換成天數
-            roundded_day = round(days) #四捨五入取整數
+            roundded_day = round(days, 1) #四捨五入取整數
             return roundded_day
         return None #如果這兩個時間戳存在，否則返回none

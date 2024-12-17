@@ -391,11 +391,11 @@ def start_process(request):
                             else:
                                 process_time.duration_B = duration
                         elif process_type == "Complete":
-                            if process_time.duration_A is None:
+                            if (process_time.process_B is None) and (process_time.process_C is None): #A->Complete
                                 process_time.duration_A = duration
-                            elif process_time.duration_B is None:
-                                process_time.duration_B = duration
-                            elif process_time.duration_C is None:
+                            elif (process_time.process_C is None): #A->B->complete
+                                process_time.duration_B = duration 
+                            elif process_time.duration_C is not None:
                                 process_time.duration_C = duration
                     process_time.save()
 
@@ -519,7 +519,9 @@ def process_B(request, order_id):
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
     
 def process_C(request, order_id):
-    
+    """
+    跟A一樣
+    """
     status = request.session.get("is_login")
     if not status:
         return JsonResponse({'status': 'error', 'message': 'Please sign in first.'}, status=401)
@@ -564,6 +566,9 @@ def process_C(request, order_id):
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
     
 def status(request):
+    """
+    顯示所有經過Process處理的訂單列表，同時顯示每個process預估耗時天數
+    """
     status = request.session.get("is_login")
     if not status:
         return redirect("/")
@@ -590,17 +595,42 @@ def status(request):
                 for order in page_obj
             ]
             return JsonResponse({"orders":orderID, "has_next":page_obj.has_next(), "total_pages": paginators.num_pages})
-        return render(request, "execute/status.html", {"page_obj" : page_obj})
+        duration_A = ProcessTime.objects.values_list("duration_A", flat=True)
+        duration_B = ProcessTime.objects.values_list("duration_B", flat=True)
+        duration_C = ProcessTime.objects.values_list("duration_C", flat=True)
+
+        print("duration:", type(duration_A))
+        filter_A = [x for x in duration_A if x not in (0, None)]
+        filter_B = [x for x in duration_B if x not in (0, None)]
+        filter_C = [x for x in duration_C if x not in (0, None)]
+        print("filter:", type(filter_A))
+        print("sum:",type(sum(filter_A)))
+        print("len:",type(len(filter_A)))
+        averge_A = round(sum(filter_A) / len(filter_A) if filter_A else 0, 2)
+        averge_B = round(sum(filter_B) / len(filter_B) if filter_B else 0, 2)
+        averge_C = round(sum(filter_C) / len(filter_C) if filter_C else 0, 2)
+        return render(request, "execute/status.html", {
+            "page_obj" : page_obj,
+            "average_A" : averge_A,
+            "average_B" : averge_B,
+            "average_C" : averge_C
+            })
 
 def status_detail(request, order_id):
+    """
+    點擊訂單的expand/hide按鈕後會顯示該訂單的處理歷史與耗時天數
+    """
     try:
         process_data = ProcessTime.objects.filter(order_id = order_id)
         process_detail = [
             {
-                "process_A" : "Processing" if data.duration_A is None else data.duration_A,
-                "process_B" : "Processing" if data.duration_B is None else data.duration_B,
-                "process_C" : "Processing" if data.duration_C is None else data.duration_C,
-                "complete":  "Not Complete" if data.complete is None else timezone.localtime(data.complete).strftime("%Y-%m-%d %H:%M")
+                "process_A" : "Processing/Not Process" if data.duration_A is None else data.duration_A,
+                "process_B" : "Processing/Not Process" if data.duration_B is None else data.duration_B,
+                "process_C" : "Processing/Not Process" if data.duration_C is None else data.duration_C,
+                "complete":  "Not Complete" if data.complete is None else timezone.localtime(data.complete).strftime("%Y-%m-%d %H:%M"),
+                "A_time" : timezone.localtime(data.process_A).strftime("%Y-%m-%d %H:%M"),
+                "B_time" : "Not start/deal" if data.process_B is None else timezone.localtime(data.process_B).strftime("%Y-%m-%d %H:%M"),
+                "C_time" : "Not start/deal" if data.process_C is None else timezone.localtime(data.process_C).strftime("%Y-%m-%d %H:%M")
             }
             for data in process_data
         ]

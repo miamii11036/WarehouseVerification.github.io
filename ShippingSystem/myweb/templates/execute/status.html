@@ -3,13 +3,123 @@
 {% block title %}Status{% endblock %}
 {% block head %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
-<link href="{% static 'css/search.css' %}" rel="stylesheet" type="text/css">
+
+<style>
+    body{
+        height: 100vh;
+        min-width: 1500px;   
+    }
+    @media (max-width: 991px) { 
+        .responsive-form { 
+            flex-direction: column; 
+        } 
+    }
+    #upsquare {
+        max-width:fit-content;
+        --bs-card-height: fit-content;
+        --bs-border-width:0px;
+        position: fixed; 
+        background-color: #FBFBFB;
+        bottom: 5px;
+        right: 5px;         
+    }
+    #upsquare_body {
+        padding: 0px;
+    }
+    .pagination.justify-content-center {
+        --bs-pagination-color:#46656F;
+        --bs-pagination-border-color:#D8DFE5;
+
+        --bs-pagination-active-color:#FBFBFB;
+        --bs-pagination-active-bg:#46656F;
+        --bs-pagination-active-border-color:#46656F;
+
+        --bs-pagination-hover-bg: #46656F;
+        --bs-pagination-hover-color: #FBFBFB;
+        --bs-pagination-hover-border-color: #D8DFE5;
+
+        --bs-pagination-focus-bg: #46656F;
+        --bs-pagination-focus-color: #FBFBFB;
+
+        --bs-pagination-disabled-color: #46656F;
+        --bs-pagination-disabled-bg:#D8DFE5;
+        --bs-pagination-disabled-border-color:#D8DFE5
+    }
+    #submit{
+        /* expand/hide按鈕 */
+        padding: 5px 5px;
+        background-color: #46656F; 
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        width: fit-content; 
+    }
+    .border.border-2.shadow.p-3.mb-5.bg-body-tertiary.rounded {
+        margin: auto;
+        margin-top: 100px; 
+        max-width: 2100px !important;
+    }
+    .table.table-striped {
+        --bs-table-striped-bg:#D8DFE5;
+        --bs-table-striped-color:#01070A;
+        margin: 10px 0px;
+    }
+    .table.table-hover {
+        --bs-table-hover-bg:#8FABB7;
+    }
+    #column1 {
+        min-width: 100px;
+        text-align: left;
+        word-wrap: break-word;
+    }
+    #processcontainers {
+        --bs-border-color-translucent:#D8DFE5;
+        color:#01070A;
+        background-color:#D8DFE5;
+        margin-top: 250px !important;
+        line-height:50px;
+        width: 1500px;
+        height: 200px;
+        margin: auto;
+    }
+    .card-title{
+        margin-bottom: 24px;
+        margin-top: 10px;
+    }
+    .card-text{
+        text-align:center;
+        margin-top: 35px;
+        font-size: 28px;
+    }
+</style>
+
 {% endblock %}
 
 {% block content %}
-<div class="vstack gap-3">
-    <!--各處理程序平均耗時天數-->
 
+    <!--各處理程序平均耗時天數-->
+    <div class="card-group shadow" id="processcontainers">
+        <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Process A</h5>
+            <p class="card-text" id="daysA">Estimated time:&nbsp;{{average_A}}&nbsp;days</p>
+        </div>
+        </div>
+        <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Process B</h5>
+            <p class="card-text" id="daysB">Estimated time:&nbsp;{{average_B}}&nbsp;days</p>
+        </div>
+        </div>
+        <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Process C</h5>
+            <p class="card-text" id="daysC">Estimated time:&nbsp;{{average_C}}&nbsp;days</p>
+        </div>
+        </div>
+    </div>
     <!--訂單列表-->
     <div class="border border-2 shadow p-3 mb-5 bg-body-tertiary rounded"  style="max-width: 2100px;">
         <table class="table table-hover" id="order-list-table">
@@ -44,10 +154,9 @@
                         <!--開始填入Process Time的內容-->
                         <table class="table table-striped">
                             <thead class="table-light">
-                                <th>Process A</th>
-                                <th>Process B</th>
-                                <th>Process C</th>
-                                <th>Complete</th>
+                                <th></th>
+                                <th>Start Time</th>
+                                <th>Consuming&nbsp;(days)</th>
                             </thead>
                             <tbody class="order-process-data"><!--Json傳遞過來的資料開始填入-->
                                 
@@ -78,10 +187,10 @@
             </li>
         </ul>
     </nav>
-</div>
+
 <!--返回頂部按鈕-->
-<div class="card">
-    <div class="card-body">
+<div class="card" id="upsquare">
+    <div class="card-body" id="upsquare_body">
     <a href="#navbar"><img src="{% static 'image/UpSquared.png' %}"></a>
     </div>
 </div>
@@ -158,10 +267,9 @@ $(document).ready(function(e) {
                             <td colspan="7">
                                 <table class="table table-striped">
                                     <thead class="table-light">
-                                        <th>Process A</th>
-                                        <th>Process B</th>
-                                        <th>Process C</th>
-                                        <th>Complete</th>
+                                        <th></th>
+                                        <th>Start Time</th>
+                                        <th>Consuming&nbsp;(days)</th>
                                     </thead>
                                     <tbody class="order-process-data">
                                         
@@ -192,11 +300,23 @@ $(document).ready(function(e) {
                                 process_data.forEach(data =>{
                                 tbody.append(`
                                     <tr>
+                                        <td>Process A</td>
+                                        <td>${data.A_time}</td>                                        
                                         <td>${data.process_A}</td>
-                                        <td>${data.process_B}</td>
-                                        <td>${data.process_C}</td>
-                                        <td>${data.complete}</td>
                                     </tr>
+                                    <tr>
+                                        <td>Process B</td>
+                                        <td>${data.B_time}</td>
+                                        <td>${data.process_B}</td>                                       
+                                    <tr>
+                                        <td>Process C</td>
+                                        <td>${data.C_time}</td>
+                                        <td>${data.process_C}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Final Complete</td>
+                                        <td>${data.complete}</td>
+                                        <td></td>
                                 `);
                             });
                             } else {
@@ -252,6 +372,24 @@ $(document).ready(function(e) {
         }
     }
     loadOrder(1);
+
+    // function showdays() {
+    //     var daysA = $("#daysA");
+    //     var daysB = $("#daysB");
+    //     var daysC = $("#daysC");
+
+    //     $.get(`/status_days/`, function(data) {
+    //         const duration_data = data.days;
+
+    //         daysA.empty();
+    //         daysB.empty();
+    //         daysC.empty();
+    //         daysA.append(`${duration_data.average_A}`);
+    //         daysB.append(`${duration_data.average_B}`);
+    //         daysC.append(`${duration_data.average_C}`);
+    //     });
+    // }
+    // showdays();
 });
 </script>
 
