@@ -126,7 +126,7 @@ def modify_data(request, email):
                 except Exception as e:
                     return HttpResponse(f"沒有儲存到資料庫:{str(e)}")
             else:
-                return HttpResponse("沒通過驗證")
+                messages.add_message(request, messages.ERROR, "Password verification required")
         return render(request, "enroll&login/modify.html", {"form":form, "user":user, "email":email})
     else:
         return redirect("/")
@@ -395,7 +395,7 @@ def start_process(request):
                                 process_time.duration_A = duration
                             elif (process_time.process_C is None): #A->B->complete
                                 process_time.duration_B = duration 
-                            elif process_time.duration_C is not None:
+                            else: 
                                 process_time.duration_C = duration
                     process_time.save()
 
