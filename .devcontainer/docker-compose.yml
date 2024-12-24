@@ -13,10 +13,16 @@ services:
     command: sleep infinity
 
     # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
-    network_mode: service:db
+    # network_mode: service:db 將container額外設置對外的port
 
     # Use "forwardPorts" in **devcontainer.json** to forward an app port locally.
     # (Adding the "ports" property to this file will not forward from a Codespace.)
+    ports:  # 將容器的 8000 端口映射到宿主機的 8000 端口（宿主機訪問 app 時使用 8000）
+      - "8000:8000"
+
+    networks: #將 app 和 db 容器加入名為 my_network 的自定義網路，以實現容器間的通訊
+      - my_network
+
 
   db:
     image: postgres:latest
@@ -27,9 +33,13 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_DB: postgres
       POSTGRES_PASSWORD: postgres
-
+    networks: 
+      - my_network 
     # Add "forwardPorts": ["5432"] to **devcontainer.json** to forward PostgreSQL locally.
     # (Adding the "ports" property to this file will not forward from a Codespace.)
 
 volumes:
   postgres-data:
+
+networks: #定義自定義網路 my_network
+  my_network:

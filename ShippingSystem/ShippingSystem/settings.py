@@ -26,7 +26,10 @@ SECRET_KEY = "django-insecure-%1jd22mpkxt4z4!tp%(r@^!i0#h9gmp%bsl-ea&qy_&(2)a+q7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+#原本是ALLOWED_HOSTS = ['fea6-36-239-84-164.ngrok-free.app', 'localhost']
+CSRF_TRUSTED_ORIGINS = ['https://*.ngrok-free.app'] #因為使用ngrok所以URL經常變動，所以使用*取代變動的URL
+#CSRF_TRUSTED_ORIGINS = ['https://fea6-36-239-84-164.ngrok-free.app']  若URL固定則這樣寫
 
 
 # Application definition
@@ -82,7 +85,7 @@ DATABASES = {
         "NAME": "postgres",
         'USER': 'postgres',
         'PASSWORD': 'postgres',
-        'HOST':"localhost",
+        'HOST':"db", #原本是localhost，但我重新設置container的對主機的port了，所以需要直接連接database
         "PORT":5432
     }
 }

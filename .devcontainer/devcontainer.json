@@ -5,7 +5,7 @@
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "app",
 	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-	"forwardPorts": [ 5432 ],
+	"forwardPorts": [ 5432 ], /*和app連接的port為5432*/
 	"postCreateCommand": "pip install --user -r requirements.txt"
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
