@@ -3,9 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>首頁</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <style>
+        /*#01070A  #46656F  #8FABB7 #D8DFE5 #FBFBFB*/
+        body {
+            margin: 0;
+            height: 100vh; /* 確保高度覆蓋整個視窗 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* 水平置中 */
+            align-items: center; /* 垂直置中 */
+            background-color: #8FABB7; /* 可選，設置背景色 */
+        }
+
+        fieldset{
+            padding: 30px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #FBFBFB;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 增加陰影 */
+            text-align: center; /* 將表單內容置中 */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .submit{
+            margin-top: 10px; /* 按鈕與輸入框的間距 */
+            padding: 10px 20px;
+            background-color: #46656F; /* 按鈕背景色 */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+        .title{
+            font-size: 70px;
+            margin-bottom: 150px;
+            color: #01070A;
+        }
+        a{
+            margin-top: 10px;
+            margin-bottom: 255px
+        }
+        
+    </style>
+{% load static %} 
 </head>
 <body>
-    <h1>專案目的</h1> <p>將上一份倉管職位接觸到的商業邏輯透過Django實體化，以此熟練</p> <ul> <li>開發環境的架設：Linux與Docker</li> <li>Git與Github的應用</li> <li>Django的處理邏輯與應用方式</li> <li>動態網頁設計與響應式網頁設計 <ul> <li>AJAX, jQuery應用</li> <li>Bootstrap前端網頁框架應用</li> <li>UI/UX設計</li> </ul> </li> <li>PostgreSQL與Django的整合 <ul> <li>資料庫的規劃設計與應用</li> <li>實體關係資料模型 (ERD)的創建</li> </ul> </li> <li>前端後端資料傳輸方法與整合</li> <li>UML圖表製作</li> <li>SQL, python, HTML, JavaScript</li> </ul> <h1>專案目標</h1> <ul> <li>使用者註冊、登入、登出、刪除系統 <ul> <li>使用者可自行修改密碼與使用者名稱</li> </ul> </li> <li>銷售訂單搜尋系統 <ul> <li>採用分頁設計，以避免頁面初始載入過多資料</li> <li>為每張銷售訂單添加「展開與隱藏按鈕」，以顯示或隱藏詳細品項內容。讓系統只載入使用者需要的資料，避免系統過載</li> <li>提供「訂單ID查詢」和「篩選條件查詢」，提高使用者搜尋效率</li> </ul> </li> <li>銷售訂單狀態系統 <ul> <li>提供目前各種再處理流程的平均耗時天數資訊</li> <li>提供訂單的再處理流程歷史紀錄</li> <li>採用「展開與隱藏按鈕」設計，讓系統只載入使用者需要的訂單再處理歷史資料</li> </ul> </li> <li>再處理流程檢核系統 <ul> <li>提供訂單的所有品項清單資訊</li> <li>提供產品的庫存資訊</li> <li>提供產品的其他銷售訂單資訊</li> </ul> </li> </ul>
-    <a href="https://pimia-blog.notion.site/Shipping-System-15006c158a2880ef822aeb9d4ad1af16">更多詳細內容請點擊連結</a>
+        <div class="title">Welcome to Shipping System</div>
+        <fieldset>
+            <form action="{% url 'login' %}" method="post">
+                {% csrf_token %}
+                <!-- 帳號輸入 -->
+                <div class="input-group mb-3">
+                    <span class="input-group-text"><img src="{% static 'image/3.png' %}" style="height: 35px; width: 35px;"></span>
+                    <input type="text" class="form-control" placeholder="Account" aria-label="Account" name="account">
+                </div>
+                <!-- 密碼輸入 -->
+                <div class="input-group mb-3" style="margin-bottom: 0px !important;">
+                    <span class="input-group-text"><img src="{% static 'image/2.png' %}" style="height: 35px; width: 35px;" ></span>
+                    <input type="password" class="form-control" placeholder="Password" aria-label="Password" name="password">
+                </div>
+                <!--帳號與密碼輸入錯誤時顯示-->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div style="font-size: 16px; color: red;">{{message}}</div> 
+                    {% endfor %}
+                {% endif %}
+                <!-- 登入按鈕 -->
+                <input class="submit" type="submit" value="sign in">
+            </form>
+        </fieldset>
+    <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" href="/enroll">register</a>
 </body>
 </html>
