@@ -12,10 +12,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -79,14 +79,17 @@ WSGI_APPLICATION = "ShippingSystem.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+env = environ.Env() #初始化環境變數管理器
+environ.Env.read_env(os.path.join(BASE_DIR, ".env")) # 設定讀取 .env 文件（如果存在）
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "postgres",
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST':"db", #原本是localhost，但我重新設置container的對主機的port了，所以需要直接連接database
-        "PORT":5432
+        "NAME": env("DATABASE_NAME"),
+        'USER': env("DATABASE_USER"),
+        'PASSWORD': env("DATABASE_PASSWORD"),
+        'HOST':env("DATABASE_HOST"), #原本是localhost，但我重新設置container的對主機的port了，所以需要直接連接database
+        "PORT":env("DATABASE_PORT")
     }
 }
 
